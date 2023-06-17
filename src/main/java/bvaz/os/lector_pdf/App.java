@@ -2,6 +2,7 @@ package bvaz.os.lector_pdf;
 
 import java.awt.*;
 import javax.swing.*;
+import bvaz.os.lector_pdf.vistas.*;
 
 public class App 
 {
@@ -9,6 +10,7 @@ public class App
     {
     	Ventana v = new Ventana();
     	
+    	v.add(new VistaInicio());
     	v.setVisible(true);
     }
 }
