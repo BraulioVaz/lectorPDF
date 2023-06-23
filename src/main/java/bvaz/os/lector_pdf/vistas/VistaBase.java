@@ -7,9 +7,11 @@ public class VistaBase extends JPanel{
 	private static final long serialVersionUID = 1L;
 	
 	private float tamGeneral;
+	private float tamTitulos;
 
 	public VistaBase() {
-		tamGeneral = 14.0f;
+		tamGeneral = 18.0f;
+		tamTitulos = 24.0f;
 	}
 	
 	public void mostrarMensaje(String titulo, String mensaje) {
@@ -29,6 +31,16 @@ public class VistaBase extends JPanel{
 		Font fuente = etiqueta.getFont();
 		
 		fuente = fuente.deriveFont(tamGeneral);
+		etiqueta.setFont(fuente);
+		
+		return etiqueta;
+	}
+	
+	protected JLabel crearTitulo(String mensaje) {
+		JLabel etiqueta = new JLabel(mensaje);
+		Font fuente = etiqueta.getFont();
+		
+		fuente = fuente.deriveFont(tamTitulos);
 		etiqueta.setFont(fuente);
 		
 		return etiqueta;
