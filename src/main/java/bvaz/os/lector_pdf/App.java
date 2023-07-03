@@ -3,15 +3,20 @@ package bvaz.os.lector_pdf;
 import java.awt.*;
 import javax.swing.*;
 import bvaz.os.lector_pdf.vistas.*;
+import bvaz.os.lector_pdf.modelos.*;
 
 public class App 
 {
-    public static void main( String[] args )
+    public static void main( String[] args ) throws Exception
     {
     	Ventana v = new Ventana();
+    	VistaInicio vi = new VistaInicio();
     	
-    	v.add(new VistaInicio());
+    	v.add(vi);
     	v.setVisible(true);
+    	
+    	DistribuidorAutores disAutores = new DistribuidorAutores();
+    	System.out.println(disAutores.obtenerTodos());
     }
 }
 
