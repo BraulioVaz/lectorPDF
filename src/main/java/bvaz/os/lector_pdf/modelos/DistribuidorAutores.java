@@ -16,10 +16,6 @@ public class DistribuidorAutores extends DistribuidorEntidades<Autor>{
 		return autor;
 	}
 	
-	/**
-	 * Recupera todos los autores almacenados.
-	 * @return Lista de autores
-	 */
 	@Override
 	public List<Autor> obtenerTodos(){
 		Connection conexion = null;
@@ -48,26 +44,98 @@ public class DistribuidorAutores extends DistribuidorEntidades<Autor>{
 	}
 
 	@Override
-	public Autor buscarPorID(String id) {
-		// TODO Auto-generated method stub
+	public Autor buscarPorID(Object[] pID) {
+		Connection conexion = ConectorBD.conectar();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT * FROM autores WHERE id_autor = ?;";
+		Integer id = (Integer)pID[0];
+		
+		try {
+			stmt = conexion.prepareStatement(sql);
+			stmt.setInt(1, id);
+			rs = stmt.executeQuery();
+			
+			if(rs.next()) {
+				return nuevaInstancia(rs);
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 
 	@Override
 	public boolean insertar(Autor entidad) {
-		// TODO Auto-generated method stub
+		Connection conexion = ConectorBD.conectar();
+		PreparedStatement stmt = null;
+		String sql = "INSERT INTO autores (nombre, apellidos) VALUES (?,?);";
+		int inserciones = 0;
+		
+		try {
+			stmt = conexion.prepareStatement(sql);
+			stmt.setString(1, entidad.nombre);
+			stmt.setString(2, entidad.apellidos);
+			inserciones = stmt.executeUpdate();
+			
+			if(inserciones == 1) {
+				return true;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 
 	@Override
 	public boolean actualizar(Autor entidad) {
-		// TODO Auto-generated method stub
+		Connection conexion = ConectorBD.conectar();
+		PreparedStatement stmt = null;
+		String sql = "UPDATE autores SET nombre = ?, apellidos = ? WHERE id_autor = ?;";
+		int modificaciones = 0;
+		
+		try {
+			stmt = conexion.prepareStatement(sql);
+			stmt.setString(1, entidad.nombre);
+			stmt.setString(2, entidad.apellidos);
+			stmt.setInt(3, entidad.id_autor);
+			modificaciones = stmt.executeUpdate();
+			
+			if(modificaciones == 1) {
+				return true;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 
 	@Override
-	public boolean eliminar(String id) {
-		// TODO Auto-generated method stub
+	public boolean eliminar(Object[] pID) {
+		Connection conexion = ConectorBD.conectar();
+		PreparedStatement stmt = null;
+		String sql = "DELETE FROM autores SET WHERE id_autor = ?;";
+		int modificaciones = 0;
+		
+		try {
+			stmt = conexion.prepareStatement(sql);
+			stmt.setInt(1, (int)pID[0]);
+			modificaciones = stmt.executeUpdate();
+			
+			if(modificaciones == 1) {
+				return true;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 
