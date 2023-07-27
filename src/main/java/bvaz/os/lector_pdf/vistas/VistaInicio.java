@@ -40,6 +40,10 @@ public class VistaInicio extends VistaBase{
 		c.fill = GridBagConstraints.BOTH;
 		this.add(pnlLibros, c);
 	}
+	
+	public void agregarPestaña(String nombre, VistaBase vista) {
+		pnlLibros.add(vista);
+	}
 }
 
 class Explorador extends JTree{
