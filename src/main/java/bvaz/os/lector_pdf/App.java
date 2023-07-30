@@ -10,9 +10,12 @@ public class App
 {
     public static void main( String[] args ) throws Exception
     {
+    	DistribuidorAutores da = new DistribuidorAutores();
+    	VistaAutores autores = new VistaAutores();
     	Ventana v = new Ventana();
     	
-    	v.agregarMenu("Autores", new VistaAgregarAutor());
+    	autores.llenarTabla(da.obtenerTodos());
+    	v.agregarMenu("Autores", autores);
     	
     	v.setVisible(true);
     }
