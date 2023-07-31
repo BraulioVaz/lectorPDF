@@ -16,6 +16,7 @@ public class App
     	
     	autores.llenarTabla(da.obtenerTodos());
     	v.agregarMenu("Autores", autores);
+    	v.agregarMenu("Editoriales", new VistaEditoriales());
     	
     	v.setVisible(true);
     }
