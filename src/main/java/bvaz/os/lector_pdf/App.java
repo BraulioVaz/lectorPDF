@@ -13,12 +13,14 @@ public class App
     	DistribuidorAutores da = new DistribuidorAutores();
     	VistaAutores autores = new VistaAutores();
     	VistaLibros libros = new VistaLibros();
+    	VistaCarpetas carpetas = new VistaCarpetas();
     	Ventana v = new Ventana();
     	
     	autores.llenarTabla(da.obtenerTodos());
     	v.agregarMenu("Autores", autores);
     	v.agregarMenu("Editoriales", new VistaEditoriales());
     	v.agregarMenu("Libros", libros);
+    	v.agregarMenu("Carpetas", carpetas);
     	
     	v.setVisible(true);
     }
