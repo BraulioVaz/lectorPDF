@@ -6,7 +6,7 @@ import bvaz.os.lector_pdf.modelos.entidades.Autor;
 
 public class DistribuidorAutores extends DistribuidorEntidades<Autor>{
 	
-	private Autor nuevaInstancia(ResultSet rs) throws SQLException{
+	protected Autor instanciar(ResultSet rs) throws SQLException{
 		Autor autor = new Autor();
 		
 		autor.id_autor = rs.getInt(1);
@@ -30,7 +30,7 @@ public class DistribuidorAutores extends DistribuidorEntidades<Autor>{
 			rs = stmt.executeQuery("SELECT * FROM autores;");
 				
 			while(rs.next()) {
-				autores.add(nuevaInstancia(rs));
+				autores.add(instanciar(rs));
 			}
 		}
 		catch(SQLException e) {
@@ -57,7 +57,7 @@ public class DistribuidorAutores extends DistribuidorEntidades<Autor>{
 			rs = stmt.executeQuery();
 			
 			if(rs.next()) {
-				return nuevaInstancia(rs);
+				return instanciar(rs);
 			}
 		}
 		catch(SQLException e) {

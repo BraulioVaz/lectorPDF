@@ -1,6 +1,7 @@
 package bvaz.os.lector_pdf.modelos;
 
 import java.util.*;
+import java.sql.*;
 import bvaz.os.lector_pdf.modelos.entidades.*;
 
 public abstract class DistribuidorEntidades<T extends Entidad> {
@@ -8,6 +9,13 @@ public abstract class DistribuidorEntidades<T extends Entidad> {
 	public DistribuidorEntidades() {
 		
 	}
+	
+	/**
+	 * Crea una instancia basada en el resultado de una consulta.
+	 * @param rs ResultSet de consulta SQL
+	 * @return Instancia de la entidad con los datos del ResultSet
+	 */
+	protected abstract T instanciar(ResultSet rs) throws SQLException;
 	
 	/**
 	 * Recupera una lista de todas las entidades almacenadas en la BD.
