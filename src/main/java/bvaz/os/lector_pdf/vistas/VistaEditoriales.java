@@ -1,6 +1,7 @@
 package bvaz.os.lector_pdf.vistas;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import bvaz.os.lector_pdf.modelos.entidades.Editorial;
@@ -63,5 +64,21 @@ public class VistaEditoriales extends VistaBase{
 		c.gridwidth = 2;
 		c.weighty = 0.6;
 		this.add(contenedorTabla, c);
+	}
+	
+	public void setEditoriales(java.util.List<Editorial> pEditoriales) {
+		editoriales.setEntidades(pEditoriales);
+	}
+	
+	public Editorial getNuevaEditorial() {
+		Editorial editorial = new Editorial();
+		
+		editorial.nombre = txtNombre.getText();
+		
+		return editorial;
+	}
+	
+	public void setEventoAgregarEditorial(ActionListener a) {
+		btnAgregar.addActionListener(a);
 	}
 }

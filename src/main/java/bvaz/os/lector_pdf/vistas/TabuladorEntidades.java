@@ -66,6 +66,25 @@ public class TabuladorEntidades<T extends Entidad> extends JTable{
 		modelo.addRow(datos);
 	}
 	
+	private void limpiar() {
+		DefaultTableModel modelo = (DefaultTableModel)this.dataModel;
+		int registros = modelo.getRowCount();
+		
+		for(int i = 0; i < registros; i++) {
+			modelo.removeRow(0);
+		}
+		
+		entidades.clear();
+	}
+	
+	public void setEntidades(List<T> pEntidades) {
+		limpiar();
+		
+		for(T entidad : pEntidades) {
+			agregar(entidad);
+		}
+	}
+	
 	public T entidadActiva() {
 		return null;
 	}

@@ -3,6 +3,7 @@ package bvaz.os.lector_pdf;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import bvaz.os.lector_pdf.controladores.*;
 import bvaz.os.lector_pdf.vistas.*;
 import bvaz.os.lector_pdf.modelos.*;
 
@@ -10,15 +11,17 @@ public class App
 {
     public static void main( String[] args ) throws Exception
     {
+    	ControladorEditoriales cEditoriales;
     	DistribuidorAutores da = new DistribuidorAutores();
     	VistaAutores autores = new VistaAutores();
     	VistaLibros libros = new VistaLibros();
     	VistaCarpetas carpetas = new VistaCarpetas();
     	Ventana v = new Ventana();
+    	cEditoriales = new ControladorEditoriales(new VistaEditoriales());
     	
     	autores.llenarTabla(da.obtenerTodos());
     	v.agregarMenu("Autores", autores);
-    	v.agregarMenu("Editoriales", new VistaEditoriales());
+    	v.agregarMenu("Editoriales", cEditoriales.getVista());
     	v.agregarMenu("Libros", libros);
     	v.agregarMenu("Carpetas", carpetas);
     	

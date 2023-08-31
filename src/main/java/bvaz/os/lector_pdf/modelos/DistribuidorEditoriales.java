@@ -9,7 +9,7 @@ public class DistribuidorEditoriales extends DistribuidorEntidades<Editorial>{
 	protected Editorial instanciar(ResultSet rs) throws SQLException{
 		Editorial entidad = new Editorial();
 		
-		entidad.id_editorial = rs.getInt("id_libro");
+		entidad.id_editorial = rs.getInt("id_editorial");
 		entidad.nombre = rs.getString("nombre");
 		
 		return entidad;
@@ -72,7 +72,7 @@ public class DistribuidorEditoriales extends DistribuidorEntidades<Editorial>{
 		Connection conexion = ConectorBD.conectar();
 		PreparedStatement sentencia = null;
 		boolean resultado = false;
-		String sql = "INSERT INTO editoriales VALUES (null, ?);";
+		String sql = "INSERT INTO editoriales (nombre) VALUES (?);";
 		
 		if(conexion != null) {
 			try {
