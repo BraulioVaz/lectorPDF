@@ -5,24 +5,24 @@ import java.awt.event.*;
 import javax.swing.*;
 import bvaz.os.lector_pdf.controladores.*;
 import bvaz.os.lector_pdf.vistas.*;
-import bvaz.os.lector_pdf.modelos.*;
 
 public class App 
 {
     public static void main( String[] args ) throws Exception
     {
+    	ControladorAutores cAutores;
     	ControladorEditoriales cEditoriales;
-    	DistribuidorAutores da = new DistribuidorAutores();
-    	VistaAutores autores = new VistaAutores();
-    	VistaLibros libros = new VistaLibros();
+    	ControladorLibros cLibros;
     	VistaCarpetas carpetas = new VistaCarpetas();
     	Ventana v = new Ventana();
-    	cEditoriales = new ControladorEditoriales(new VistaEditoriales());
     	
-    	autores.llenarTabla(da.obtenerTodos());
-    	v.agregarMenu("Autores", autores);
+    	cAutores = new ControladorAutores(new VistaAutores());
+    	cEditoriales = new ControladorEditoriales(new VistaEditoriales());
+    	cLibros = new ControladorLibros(new VistaLibros());
+    	
+    	v.agregarMenu("Autores", cAutores.getVista());
     	v.agregarMenu("Editoriales", cEditoriales.getVista());
-    	v.agregarMenu("Libros", libros);
+    	v.agregarMenu("Libros", cLibros.getVista());
     	v.agregarMenu("Carpetas", carpetas);
     	
     	v.setVisible(true);

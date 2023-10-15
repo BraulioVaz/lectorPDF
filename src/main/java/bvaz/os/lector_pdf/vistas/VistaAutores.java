@@ -1,6 +1,7 @@
 package bvaz.os.lector_pdf.vistas;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import bvaz.os.lector_pdf.modelos.entidades.Autor;
@@ -88,9 +89,7 @@ public class VistaAutores extends VistaBase{
 	}
 	
 	public void llenarTabla(java.util.List<Autor> autores) {
-		for(Autor a : autores) {
-			tblAutores.agregar(a);
-		}
+		tblAutores.setEntidades(autores);
 	}
 	
 	public Autor nuevoAutor() {
@@ -104,5 +103,9 @@ public class VistaAutores extends VistaBase{
 	
 	public Autor autorSeleccionado() {
 		return null;
+	}
+	
+	public void definirEventoAgregar(ActionListener a) {
+		btnAgregar.addActionListener(a);
 	}
 }
