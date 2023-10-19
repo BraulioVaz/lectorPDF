@@ -256,6 +256,14 @@ public class VistaLibros extends VistaBase{
 		this.add(pnlBase);
 	}
 	
+	/**
+	 * Agrega un {@link ActionListener} al boton para agregar un libro.
+	 * @param a
+	 */
+	public void definirEventoAgregar(ActionListener a) {
+		btnAgregarLibro.addActionListener(a);
+	}
+	
 	public void definirLibros(List<Libro> pLibros) {
 		cboLibros.removeAllItems();
 		
@@ -285,8 +293,25 @@ public class VistaLibros extends VistaBase{
 		return (Libro) cboLibros.getSelectedItem();
 	}
 	
-	public String getTitulo() {
-		return txtTitulo.getText();
+	private Editorial getEditorial() {
+		return (Editorial) cboEditorial.getSelectedItem();
+	}
+	
+	/**
+	 * Genera un libro cuyos atributos son llenados con los controles de entrada,
+	 * no se revisa la validez de los atributos.
+	 * @return Nuevo objeto LIBRO
+	 */
+	public Libro generarLibro() {
+		Libro libro = new Libro();
+		
+		libro.titulo = txtTitulo.getText();
+		libro.editorial = getEditorial().id_editorial;
+		libro.fecha_publicacion = txtFecha.getText();
+		libro.archivo = lblArchivo.getText();
+		libro.marcador = "";
+		
+		return libro;
 	}
 	
 	public List<Autor> getAutores(){
@@ -301,18 +326,6 @@ public class VistaLibros extends VistaBase{
 		}
 		
 		return autoresSeleccionados;
-	}
-	
-	public Editorial getEditorial() {
-		return (Editorial) cboEditorial.getSelectedItem();
-	}
-	
-	public String getFecha() {
-		return txtFecha.getText();
-	}
-	
-	public String getArchivo() {
-		return lblArchivo.getText();
 	}
 	
 	private class RegistroAutores extends JPanel{
