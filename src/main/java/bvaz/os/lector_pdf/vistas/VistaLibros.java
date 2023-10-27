@@ -26,33 +26,14 @@ public class VistaLibros extends VistaBase{
 	private JButton btnAgregarLibro;
 	private JButton btnModificarLibro;
 	private JButton btnLimpiar;
+	private ArrayList<RegistroAutores> listadoAutores;
+	private boolean estaInicializado;
 	
-	private void limpiar() {
-		cboLibros.setSelectedIndex(-1);
-		txtTitulo.setText("");
-		pnlAutores.removeAll();
-		pnlAutores.revalidate();
-		cboEditorial.setSelectedIndex(-1);
-		txtFecha.setText("");
-		lblArchivo.setText("");
-	}
-	
-	private void modoInsercion() {
-		btnAgregarLibro.setEnabled(true);
-		btnModificarLibro.setEnabled(false);
-	}
-	
-	private void modoEdicion() {
-		btnAgregarLibro.setEnabled(false);
-		btnModificarLibro.setEnabled(true);
-	}
-	
-	private void agregarAutor() {
-		pnlAutores.add(new RegistroAutores());
-		pnlAutores.revalidate();;
-	}
-	
-	public VistaLibros() {
+	private void inicializarAtributos() {
+		if(estaInicializado) {
+			return;
+		}
+		
 		optAgregar = new JRadioButton("Agregar un nuevo libro");
 		optEditar = new JRadioButton("Editar un registro existente");
 		cboLibros = new JComboBox<Libro>();
@@ -68,26 +49,42 @@ public class VistaLibros extends VistaBase{
 		btnAgregarLibro = new JButton("Agregar");
 		btnModificarLibro = new JButton("Modificar");
 		btnLimpiar = new JButton("Limpiar");
+		listadoAutores = new ArrayList<RegistroAutores>();
+		estaInicializado = true;
+	}
+	
+	private void agregarAutor() {
+		RegistroAutores nuevoAutor = new RegistroAutores();
+		
+		listadoAutores.add(nuevoAutor);
+		pnlAutores.add(nuevoAutor);
+		pnlAutores.revalidate();
+	}
+	
+	/**
+	 * Elimina los datos ingresados dejando todos los controles en su estado inicial.
+	 */
+	public void limpiar() {
+		cboLibros.setSelectedIndex(-1);
+		txtTitulo.setText("");
+		pnlAutores.removeAll();
+		pnlAutores.revalidate();
+		cboEditorial.setSelectedIndex(-1);
+		txtFecha.setText("");
+		lblArchivo.setText("");
+	}
+	
+	public VistaLibros() {
 		JPanel viewport = new JPanel();
 		JScrollPane pnlBase = null;
 		GridBagConstraints c = null;
+		
+		inicializarAtributos();
 		
 		//Configuracion de radio buttons
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(optAgregar);
 		bg.add(optEditar);
-		optAgregar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				modoInsercion();	
-			}
-		});
-		optEditar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				modoEdicion();
-			}
-		});
 		optAgregar.doClick();
 		
 		//Configuracion del explorador
@@ -264,6 +261,10 @@ public class VistaLibros extends VistaBase{
 		btnAgregarLibro.addActionListener(a);
 	}
 	
+	/**
+	 * Establece los libros en el ComboBox de seleccion del libro a editar.
+	 * @param pLibros Lista de libros.
+	 */
 	public void definirLibros(List<Libro> pLibros) {
 		cboLibros.removeAllItems();
 		
@@ -272,11 +273,23 @@ public class VistaLibros extends VistaBase{
 		}
 	}
 	
+	/**
+	 * Establece los autores.
+	 * @param pAutores Lista de autores.
+	 */
 	public void definirAutores(List<Autor> pAutores) {
 		autores.clear();
 		autores.addAll(pAutores);
+		
+		for(RegistroAutores r : listadoAutores) {
+			r.actualizarAutores();
+		}
 	}
 	
+	/**
+	 * Establece las editoriales.
+	 * @param pEditoriales Lista de editoriales.
+	 */
 	public void definirEditoriales(List<Editorial> pEditoriales) {
 		cboEditorial.removeAllItems();
 		
@@ -285,16 +298,16 @@ public class VistaLibros extends VistaBase{
 		}
 	}
 	
+	/**
+	 * Recupera el libro que se busca modificar.
+	 * @return El libro seleccionado o nulo si esta en modo de insercion.
+	 */
 	public Libro libroActivo() {
 		if(optAgregar.isSelected()) {
 			return null;
 		}
 		
 		return (Libro) cboLibros.getSelectedItem();
-	}
-	
-	private Editorial getEditorial() {
-		return (Editorial) cboEditorial.getSelectedItem();
 	}
 	
 	/**
@@ -304,9 +317,10 @@ public class VistaLibros extends VistaBase{
 	 */
 	public Libro generarLibro() {
 		Libro libro = new Libro();
+		Editorial editorial = (Editorial)cboEditorial.getSelectedItem();
 		
 		libro.titulo = txtTitulo.getText();
-		libro.editorial = getEditorial().id_editorial;
+		libro.editorial = editorial.id_editorial;
 		libro.fecha_publicacion = txtFecha.getText();
 		libro.archivo = lblArchivo.getText();
 		libro.marcador = "";
@@ -314,15 +328,16 @@ public class VistaLibros extends VistaBase{
 		return libro;
 	}
 	
+	/**
+	 * Recupera los autores seleccionados.
+	 * @return Lista de autores seleccionados, la lista esta vacia 
+	 * si no hay algun autor seleccionado.
+	 */
 	public List<Autor> getAutores(){
 		ArrayList<Autor> autoresSeleccionados = new ArrayList<Autor>();
-		RegistroAutores registro = null;
 		
-		for(Component c : pnlAutores.getComponents()) {
-			if(c instanceof RegistroAutores) {
-				registro = (RegistroAutores) c;
-				autoresSeleccionados.add(registro.itemSeleccionado());
-			}
+		for(RegistroAutores r : listadoAutores) {
+			autoresSeleccionados.add(r.itemSeleccionado());
 		}
 		
 		return autoresSeleccionados;
@@ -335,6 +350,7 @@ public class VistaLibros extends VistaBase{
 		public RegistroAutores() {
 			JButton btnEliminarAutor = new JButton("X");
 			Box controles = Box.createHorizontalBox();
+			selector = new JComboBox<Autor>();
 			
 			btnEliminarAutor.addActionListener(new ActionListener() {
 				@Override
@@ -344,9 +360,11 @@ public class VistaLibros extends VistaBase{
 				}
 			});
 			
+			actualizarAutores();
+			
 			this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			
-			controles.add(crearSelector());
+			controles.add(selector);
 			controles.add(Box.createHorizontalStrut(15));
 			controles.add(btnEliminarAutor);
 			
@@ -354,18 +372,18 @@ public class VistaLibros extends VistaBase{
 			this.add(Box.createVerticalStrut(15));
 		}
 		
-		private JComboBox<Autor> crearSelector() {
-			selector = new JComboBox<Autor>();
+		public Autor itemSeleccionado() {
+			return (Autor)selector.getSelectedItem();
+		}
+		
+		public void actualizarAutores() {
+			selector.removeAllItems();
 			
 			for(Autor a : autores) {
 				selector.addItem(a);
 			}
 			
-			return selector;
-		}
-		
-		public Autor itemSeleccionado() {
-			return (Autor)selector.getSelectedItem();
+			this.revalidate();
 		}
 	}
 }

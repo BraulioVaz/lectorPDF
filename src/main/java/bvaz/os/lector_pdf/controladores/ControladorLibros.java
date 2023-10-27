@@ -21,8 +21,13 @@ public class ControladorLibros extends ControladorBase{
 		
 		vista.definirAutores(autores.obtenerTodos());
 		vista.definirEditoriales(editoriales.obtenerTodos());
+		actualizarListadoLibros();
 		
 		definirEventos();
+	}
+	
+	private void actualizarListadoLibros() {
+		vista.definirLibros(modelo.obtenerTodos());
 	}
 	
 	private void definirEventos() {
@@ -33,9 +38,18 @@ public class ControladorLibros extends ControladorBase{
 		});
 	}
 	
-	public void agregarLibro() {
-		//TODO Actualiza la vista y revisa la duplicacion de libros
+	private void agregarLibro() {
+		//TODO evisa la duplicacion de libros
 		Libro nuevoLibro = vista.generarLibro();
-		modelo.insertar(nuevoLibro);
+		boolean insercionExitosa = modelo.insertar(nuevoLibro);
+		
+		if(insercionExitosa) {
+			vista.limpiar();
+			vista.mostrarMensaje("Operacion exitosa", "Se ha agregado el libro correctamente.");
+			actualizarListadoLibros();
+		}
+		else {
+			vista.mostrarError("Hubo un problema", "No se pudo agregar el libro.");
+		}
 	}
 }
