@@ -13,17 +13,18 @@ public class App
     	ControladorAutores cAutores;
     	ControladorEditoriales cEditoriales;
     	ControladorLibros cLibros;
-    	VistaCarpetas carpetas = new VistaCarpetas();
+    	ControladorCarpetas cCarpetas;
     	Ventana v = new Ventana();
     	
     	cAutores = new ControladorAutores(new VistaAutores());
     	cEditoriales = new ControladorEditoriales(new VistaEditoriales());
     	cLibros = new ControladorLibros(new VistaLibros());
+    	cCarpetas = new ControladorCarpetas(new VistaCarpetas());
     	
     	v.agregarMenu("Autores", cAutores.getVista());
     	v.agregarMenu("Editoriales", cEditoriales.getVista());
     	v.agregarMenu("Libros", cLibros.getVista());
-    	v.agregarMenu("Carpetas", carpetas);
+    	v.agregarMenu("Carpetas", cCarpetas.getVista());
     	
     	v.setVisible(true);
     }

@@ -1,6 +1,7 @@
 package bvaz.os.lector_pdf.vistas;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -19,7 +20,8 @@ public class VistaCarpetas extends VistaBase{
 	
 	public VistaCarpetas() {
 		txtNombre = new JTextField(10);
-		lstCarpetas = new JList<Carpeta>();
+		lstCarpetas = new JList<Carpeta>(new DefaultListModel<Carpeta>());
+		carpetas = new ArrayList<Carpeta>();
 		explorador = new Explorador();
 		btnCrearCarpeta = new JButton("Agregar");
 		btnAsignar = new JButton("=>");
@@ -101,5 +103,23 @@ public class VistaCarpetas extends VistaBase{
 		carpetas.clear();
 		carpetas.addAll(pCarpetas);
 		actualizarListadoDeCarpetas();
+	}
+	
+	/**
+	 * Establece el {@link ActionListener} asociado al buton para
+	 * crear una nueva carpeta.
+	 * @param a
+	 */
+	public void definirEventoCrearCarpeta(ActionListener a) {
+		btnCrearCarpeta.addActionListener(a);
+	}
+	
+	/**
+	 * Recupera el nombre introducido por el usuario, pudiendo ser 
+	 * para una nueva carpeta o una modificacion al nombre de una carpeta existente.
+	 * @return Nombre de carpeta
+	 */
+	public String nombreIntroducido() {
+		return txtNombre.getText();
 	}
 }

@@ -82,15 +82,14 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 		conexion = ConectorBD.conectar();
 		
 		try {
-			stmt = conexion.prepareStatement("INSERT INTO carpetas (id_carpeta, nombre, raiz) VALUES (?,?,?);");
-			stmt.setInt(1, entidad.id_carpeta);
-			stmt.setString(2, entidad.nombre);
+			stmt = conexion.prepareStatement("INSERT INTO carpetas (nombre, raiz) VALUES (?,?);");
+			stmt.setString(1, entidad.nombre);
 			
 			if(entidad.raiz == -1) {
-				stmt.setNull(3, Types.INTEGER);
+				stmt.setNull(2, Types.INTEGER);
 			}
 			else {
-				stmt.setInt(3, entidad.raiz);
+				stmt.setInt(2, entidad.raiz);
 			}
 			
 			operacionExitosa = stmt.executeUpdate() == 1;
