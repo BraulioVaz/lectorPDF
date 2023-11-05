@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.*;
 
 import bvaz.os.lector_pdf.modelos.entidades.*;
+import bvaz.os.lector_pdf.modelos.tda.Arbol;
 
 public class VistaCarpetas extends VistaBase{
 	private static final long serialVersionUID = 1L;
@@ -103,6 +104,15 @@ public class VistaCarpetas extends VistaBase{
 		carpetas.clear();
 		carpetas.addAll(pCarpetas);
 		actualizarListadoDeCarpetas();
+	}
+	
+	/**
+	 * Actualiza el explorador.
+	 * @param estructura La nueva estructura del explorador
+	 */
+	public void actualizarExplorador(Arbol estructura) {
+		explorador.definirEstructura(estructura);
+		explorador.construir();
 	}
 	
 	/**

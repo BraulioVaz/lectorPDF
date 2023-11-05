@@ -8,7 +8,9 @@ class Explorador extends JTree{
 	private static final long serialVersionUID = 1L;
 	private Arbol estructura;
 	
-	public Explorador() { }
+	public Explorador() { 
+		this.setRootVisible(false);
+	}
 	
 	public void definirEstructura(Arbol arbol) {
 		this.estructura = arbol;
@@ -23,11 +25,12 @@ class Explorador extends JTree{
 	}
 	
 	private void recorrerArbol(Arbol arbol, DefaultMutableTreeNode nodoRaiz) {
-		DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(arbol.raiz());
-		
-		nodoRaiz.add(nodo);
+		DefaultMutableTreeNode nodo = null;
 		
 		for(Arbol a : arbol.hijos()) {
+			nodo = new DefaultMutableTreeNode(a.raiz());
+			nodoRaiz.add(nodo);
+			
 			recorrerArbol(a, nodo);
 		}
 	}

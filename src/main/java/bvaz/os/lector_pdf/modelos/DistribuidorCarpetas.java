@@ -14,6 +14,10 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 		carpeta.nombre = rs.getString(2);
 		carpeta.raiz = rs.getInt(3);
 		
+		if(rs.wasNull()) {
+			carpeta.raiz = -1;
+		}
+		
 		return carpeta;
 	}
 
