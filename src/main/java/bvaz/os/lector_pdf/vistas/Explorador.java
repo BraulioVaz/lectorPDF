@@ -8,7 +8,8 @@ class Explorador extends JTree{
 	private static final long serialVersionUID = 1L;
 	private Arbol estructura;
 	
-	public Explorador() { 
+	public Explorador() {
+		this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.setRootVisible(false);
 	}
 	
@@ -33,5 +34,16 @@ class Explorador extends JTree{
 			
 			recorrerArbol(a, nodo);
 		}
+	}
+	
+	public Object elementoSeleccionado() {
+		DefaultMutableTreeNode nodo;
+		
+		if(this.isSelectionEmpty()) {
+			return null;
+		}
+		
+		nodo = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
+		return nodo.getUserObject();
 	}
 }

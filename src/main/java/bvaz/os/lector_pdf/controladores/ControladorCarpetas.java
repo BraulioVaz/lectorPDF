@@ -1,7 +1,6 @@
 package bvaz.os.lector_pdf.controladores;
 
 import java.awt.event.*;
-import java.util.*;
 import bvaz.os.lector_pdf.modelos.entidades.Carpeta;
 import bvaz.os.lector_pdf.modelos.tda.Arbol;
 import bvaz.os.lector_pdf.modelos.DistribuidorCarpetas;
@@ -28,6 +27,23 @@ public class ControladorCarpetas extends ControladorBase{
 				crearCarpeta();
 			}
 		});
+		
+		vista.definirEventoAsignarCarpeta(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Carpeta supercarpeta = vista.elementoActivoDelExplorador();
+				Carpeta subcarpeta = vista.elementoActivoDelListado();
+				
+				asignarSubcarpeta(supercarpeta, subcarpeta);
+			}
+		});
+		
+		vista.definirEventoDesasignarCarpeta(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Carpeta subcarpeta = vista.elementoActivoDelExplorador();
+				
+				desasignarSubcarpeta(subcarpeta);
+			}
+		});
 	}
 	
 	private void actualizarListadoDeCarpetas() {
@@ -35,35 +51,7 @@ public class ControladorCarpetas extends ControladorBase{
 	}
 	
 	private void actualizarExplorador() {
-		List<Carpeta> carpetas = modelo.obtenerTodos();
-		Arbol raiz = new Arbol("Raiz");
-		ArrayList<Arbol> nodosSinRevisar = new ArrayList<Arbol>();
-		Arbol nodoActual, subarbol;
-		Carpeta contenidoNodo;
-		
-		for(Carpeta c : carpetas) {
-			if(c.raiz == -1) {
-				nodoActual = new Arbol(c);
-				raiz.agregarHijo(nodoActual);
-				nodosSinRevisar.add(nodoActual);
-			}
-		}
-		
-		while(!nodosSinRevisar.isEmpty()) {
-			nodoActual = nodosSinRevisar.get(0);
-			contenidoNodo = (Carpeta) nodoActual.raiz();
-			
-			for(Carpeta c : carpetas) {
-				if(c.raiz == contenidoNodo.id_carpeta) {
-					subarbol = new Arbol(c);
-					nodoActual.agregarHijo(subarbol);
-					nodosSinRevisar.add(subarbol);
-				}
-			}
-			
-			nodosSinRevisar.remove(0);
-		}
-		
+		Arbol raiz = modelo.estructurarCarpetas();
 		vista.actualizarExplorador(raiz);
 	}
 	
@@ -80,6 +68,34 @@ public class ControladorCarpetas extends ControladorBase{
 		}
 		else {
 			vista.mostrarError("Error", "No se ha podido crear la carpeta");
+		}
+	}
+	
+	private void asignarSubcarpeta(Carpeta supercarpeta, Carpeta subcarpeta) {
+		boolean operacionExitosa = false;
+		
+		if(supercarpeta == null) {
+			return;
+		}
+		
+		subcarpeta.raiz = supercarpeta.id_carpeta;
+		operacionExitosa = modelo.actualizar(subcarpeta);
+		
+		if(operacionExitosa) {
+			actualizarExplorador();
+		}
+	}
+	
+	private void desasignarSubcarpeta(Carpeta subcarpeta) {
+		boolean operacionExitosa = false;
+		Integer[] idSupercarpeta = {subcarpeta.raiz};
+		Carpeta supercarpeta = modelo.buscarPorID(idSupercarpeta);
+		
+		subcarpeta.raiz = supercarpeta.raiz;
+		operacionExitosa = modelo.actualizar(subcarpeta);
+		
+		if(operacionExitosa) {
+			actualizarExplorador();
 		}
 	}
 }

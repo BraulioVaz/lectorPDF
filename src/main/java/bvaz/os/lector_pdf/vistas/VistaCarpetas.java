@@ -29,6 +29,8 @@ public class VistaCarpetas extends VistaBase{
 		btnDesasignar = new JButton("<=");
 		GridBagConstraints c = null;
 		
+		lstCarpetas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
 		this.setLayout(new GridBagLayout());
 		
 		//Titulo
@@ -125,11 +127,51 @@ public class VistaCarpetas extends VistaBase{
 	}
 	
 	/**
+	 * Establece el {@link ActionListener} asociado al buton para
+	 * asignar una subcarpeta.
+	 * @param a
+	 */
+	public void definirEventoAsignarCarpeta(ActionListener a) {
+		btnAsignar.addActionListener(a);
+	}
+	
+	/**
+	 * Establece el {@link ActionListener} asociado al buton para
+	 * desasignar una subcarpeta.
+	 * @param a
+	 */
+	public void definirEventoDesasignarCarpeta(ActionListener a) {
+		btnDesasignar.addActionListener(a);
+	}
+	
+	/**
 	 * Recupera el nombre introducido por el usuario, pudiendo ser 
 	 * para una nueva carpeta o una modificacion al nombre de una carpeta existente.
 	 * @return Nombre de carpeta
 	 */
 	public String nombreIntroducido() {
 		return txtNombre.getText();
+	}
+	
+	/**
+	 * Recupera el elemento activo del listado de carpetas.
+	 * @return Carpeta seleccionada
+	 */
+	public Carpeta elementoActivoDelListado() {
+		return lstCarpetas.getSelectedValue();
+	}
+	
+	/**
+	 * Recupera el elemento activo del explorador.
+	 * @return Carpeta seleccionada
+	 */
+	public Carpeta elementoActivoDelExplorador() {
+		Object elementoSeleccionado = explorador.elementoSeleccionado();
+		
+		if(elementoSeleccionado != null && elementoSeleccionado instanceof Carpeta) {
+			return (Carpeta) elementoSeleccionado;
+		}
+		
+		return null;
 	}
 }
