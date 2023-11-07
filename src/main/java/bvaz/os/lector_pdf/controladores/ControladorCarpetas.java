@@ -4,6 +4,7 @@ import java.awt.event.*;
 import bvaz.os.lector_pdf.modelos.entidades.Carpeta;
 import bvaz.os.lector_pdf.modelos.tda.Arbol;
 import bvaz.os.lector_pdf.modelos.DistribuidorCarpetas;
+import bvaz.os.lector_pdf.modelos.SistemaArchivos;
 import bvaz.os.lector_pdf.vistas.*;
 
 public class ControladorCarpetas extends ControladorBase{
@@ -51,7 +52,7 @@ public class ControladorCarpetas extends ControladorBase{
 	}
 	
 	private void actualizarExplorador() {
-		Arbol raiz = modelo.estructurarCarpetas();
+		Arbol raiz = SistemaArchivos.obtenerInstancia().estructurarCarpetas();
 		vista.actualizarExplorador(raiz);
 	}
 	

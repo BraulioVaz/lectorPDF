@@ -3,7 +3,6 @@ package bvaz.os.lector_pdf.modelos;
 import java.sql.*;
 import java.util.*;
 import bvaz.os.lector_pdf.modelos.entidades.Carpeta;
-import bvaz.os.lector_pdf.modelos.tda.Arbol;
 
 public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 
@@ -164,43 +163,4 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 		
 		return operacionExitosa;
 	}
-	
-	/**
-	 * Genera un arbol que representa la estructura de las carpetas almacenadas,
-	 * a excepcion de la raiz cada nodo tiene por contenido un objeto {@link Carpeta}.
-	 * @return Estructura de las carpetas.
-	 */
-	public Arbol estructurarCarpetas() {
-		List<Carpeta> carpetas = obtenerTodos();
-		Arbol raiz = new Arbol("Raiz");
-		ArrayList<Arbol> nodosSinRevisar = new ArrayList<Arbol>();
-		Arbol nodoActual, subarbol;
-		Carpeta contenidoNodo;
-		
-		for(Carpeta c : carpetas) {
-			if(c.raiz == -1) {
-				nodoActual = new Arbol(c);
-				raiz.agregarHijo(nodoActual);
-				nodosSinRevisar.add(nodoActual);
-			}
-		}
-		
-		while(!nodosSinRevisar.isEmpty()) {
-			nodoActual = nodosSinRevisar.get(0);
-			contenidoNodo = (Carpeta) nodoActual.raiz();
-			
-			for(Carpeta c : carpetas) {
-				if(c.raiz == contenidoNodo.id_carpeta) {
-					subarbol = new Arbol(c);
-					nodoActual.agregarHijo(subarbol);
-					nodosSinRevisar.add(subarbol);
-				}
-			}
-			
-			nodosSinRevisar.remove(0);
-		}
-		
-		return raiz;
-	}
-
 }
