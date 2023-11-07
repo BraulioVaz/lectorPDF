@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import bvaz.os.lector_pdf.controladores.*;
 import bvaz.os.lector_pdf.vistas.*;
+import bvaz.os.lector_pdf.modelos.*;
 
 public class App 
 {
@@ -49,6 +50,7 @@ class Ventana extends JFrame{
 		this.setJMenuBar(menu);
 		
 		base = new VistaInicio();
+		base.actualizarExplorador(SistemaArchivos.obtenerInstancia().estructurarArchivos());
 		this.add(base);
 		
 		this.setSize(ancho, alto);

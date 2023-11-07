@@ -59,4 +59,48 @@ public class SistemaArchivos {
 		
 		return raiz;
 	}
+	
+	/**
+	 * Genera la estructura completa del sistema de archivos, es decir incluye 
+	 * carpetas y archivos.
+	 * @return Estructura del sistema de archivos
+	 */
+	public Arbol estructurarArchivos() {
+		ArrayList<Libro> libros = (ArrayList<Libro>) manejadorLibros.obtenerTodos();
+		ArrayList<Libro> librosAgregados = new ArrayList<Libro>();
+		Arbol raiz = estructurarCarpetas();
+		
+		agregarHojas(raiz, librosAgregados);
+		libros.removeAll(librosAgregados);
+		
+		for(Libro l : libros) {
+			raiz.agregarHijo(new Arbol(l));
+		}
+		
+		return raiz;
+	}
+	
+	private void agregarHojas(Arbol raiz, ArrayList<Libro> librosAgregados) {
+		Carpeta carpetaActual = null;
+		Libro libroActual = null;
+		List<Integer> idLibros = null;
+		Object[] parametroBusqueda = new Object[1];
+		
+		for(Arbol a : raiz.hijos()) {
+			agregarHojas(a, librosAgregados);
+			
+			carpetaActual = (Carpeta) a.raiz();
+			idLibros = manejadorCarpetas.contenido(carpetaActual);
+			
+			for(Integer id : idLibros) {
+				parametroBusqueda[0] = id;
+				libroActual = manejadorLibros.buscarPorID(parametroBusqueda);
+				
+				raiz.agregarHijo(new Arbol(libroActual));
+				if(!librosAgregados.contains(libroActual)) {
+					librosAgregados.add(libroActual);
+				}
+			}
+		}
+	}
 }

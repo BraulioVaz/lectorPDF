@@ -13,4 +13,20 @@ public class Carpeta extends Entidad{
 	public String toString() {
 		return nombre;
 	}
+	
+	@Override
+	public boolean equals(Object objComparado) {
+		Carpeta otraCarpeta;
+		
+		if(!(objComparado instanceof Carpeta)) {
+			return false;
+		}
+		
+		otraCarpeta = (Carpeta) objComparado;
+		if(this.id_carpeta == otraCarpeta.id_carpeta) {
+			return true;
+		}
+		
+		return false;
+	}
 }

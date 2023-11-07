@@ -3,6 +3,7 @@ package bvaz.os.lector_pdf.vistas;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import bvaz.os.lector_pdf.modelos.tda.*;
 
 public class VistaInicio extends VistaBase{
 	private static final long serialVersionUID = 1L;
@@ -47,6 +48,11 @@ public class VistaInicio extends VistaBase{
 		pnlLibros.add(vista);
 		indice = pnlLibros.indexOfComponent(vista);
 		pnlLibros.setTabComponentAt(indice, tabulador);
+	}
+	
+	public void actualizarExplorador(Arbol a) {
+		explorador.definirEstructura(a);
+		explorador.construir();
 	}
 }
 

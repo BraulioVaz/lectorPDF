@@ -163,4 +163,32 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 		
 		return operacionExitosa;
 	}
+	
+	public List<Integer> contenido(Carpeta carpeta) {
+		Connection conexion = null;
+		PreparedStatement stmt = null;
+		ResultSet resultado = null;
+		String sql = "SELECT * FROM libros_carpetas WHERE carpeta = ?;";
+		ArrayList<Integer> clavesLibros = new ArrayList<Integer>();
+		
+		conexion = ConectorBD.conectar();
+		
+		try {
+			stmt = conexion.prepareStatement(sql);
+			stmt.setInt(1, carpeta.id_carpeta);
+			resultado = stmt.executeQuery();
+			
+			if(resultado.next()) {
+				clavesLibros.add(resultado.getInt("libro"));
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			try {conexion.close(); } catch(Exception e) {}
+		}
+		
+		return clavesLibros;
+	}
 }
