@@ -51,6 +51,10 @@ class Ventana extends JFrame{
 		
 		base = new VistaInicio();
 		base.actualizarExplorador(SistemaArchivos.obtenerInstancia().estructurarArchivos());
+		/**/
+		VisorPDF visor = new VisorPDF();
+		base.agregarPestaña("Lector", visor);
+		/**/
 		this.add(base);
 		
 		this.setSize(ancho, alto);
