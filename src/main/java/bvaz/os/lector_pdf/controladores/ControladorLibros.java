@@ -1,15 +1,17 @@
 package bvaz.os.lector_pdf.controladores;
 
 import java.awt.event.*;
+import java.util.*;
 import bvaz.os.lector_pdf.modelos.*;
 import bvaz.os.lector_pdf.modelos.entidades.*;
 import bvaz.os.lector_pdf.vistas.VistaLibros;
 
-public class ControladorLibros extends ControladorBase{
+public class ControladorLibros extends ControladorBase implements ObservadorDeCambiosEnBD{
 	private DistribuidorLibros modelo;
 	private DistribuidorAutores autores;
 	private DistribuidorEditoriales editoriales;
 	private VistaLibros vista;
+	private ArrayList<ObservadorDeCambiosEnBD> oyentesDeModificacionesEnBD;
 	
 	public ControladorLibros(VistaLibros pVista) {
 		super(pVista);
@@ -17,13 +19,18 @@ public class ControladorLibros extends ControladorBase{
 		modelo = new DistribuidorLibros();
 		autores = new DistribuidorAutores();
 		editoriales = new DistribuidorEditoriales();
+		oyentesDeModificacionesEnBD = new ArrayList<ObservadorDeCambiosEnBD>();
 		vista = pVista;
 		
-		vista.definirAutores(autores.obtenerTodos());
-		vista.definirEditoriales(editoriales.obtenerTodos());
+		actualizarEntidadesExternas();
 		actualizarListadoLibros();
 		
 		definirEventos();
+	}
+	
+	private void actualizarEntidadesExternas() {
+		vista.definirAutores(autores.obtenerTodos());
+		vista.definirEditoriales(editoriales.obtenerTodos());
 	}
 	
 	private void actualizarListadoLibros() {
@@ -47,9 +54,25 @@ public class ControladorLibros extends ControladorBase{
 			vista.limpiar();
 			vista.mostrarMensaje("Operacion exitosa", "Se ha agregado el libro correctamente.");
 			actualizarListadoLibros();
+			notificarCambioEnBD();
 		}
 		else {
 			vista.mostrarError("Hubo un problema", "No se pudo agregar el libro.");
 		}
+	}
+	
+	public void agregarOyente(ObservadorDeCambiosEnBD o) {
+		oyentesDeModificacionesEnBD.add(o);
+	}
+	
+	private void notificarCambioEnBD() {
+		for(ObservadorDeCambiosEnBD o : oyentesDeModificacionesEnBD) {
+			o.operacionDML();
+		}
+	}
+	
+	@Override
+	public void operacionDML() {
+		actualizarEntidadesExternas();
 	}
 }

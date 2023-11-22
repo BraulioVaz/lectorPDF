@@ -5,7 +5,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import bvaz.os.lector_pdf.controladores.*;
 import bvaz.os.lector_pdf.vistas.*;
-import bvaz.os.lector_pdf.modelos.*;
 
 public class App 
 {
@@ -24,6 +23,12 @@ public class App
     	cLibros = new ControladorLibros(new VistaLibros());
     	cCarpetas = new ControladorCarpetas(new VistaCarpetas());
     	
+    	/*Establecen relaciones Observador-Observado*/
+    	cLibros.agregarOyente(cPrincipal);
+    	cAutores.agregarOyente(cLibros);
+    	cEditoriales.agregarOyente(cLibros);
+    	
+    	/*Definicion del menu*/
     	ventana = new Ventana((VistaInicio) cPrincipal.getVista());
     	ventana.agregarMenu("Autores", cAutores.getVista());
     	ventana.agregarMenu("Editoriales", cEditoriales.getVista());
@@ -53,7 +58,6 @@ class Ventana extends JFrame{
 		this.setJMenuBar(menu);
 		
 		base = vistaBase;
-		base.actualizarExplorador(SistemaArchivos.obtenerInstancia().estructurarArchivos());
 		this.add(base);
 		
 		this.setSize(ancho, alto);

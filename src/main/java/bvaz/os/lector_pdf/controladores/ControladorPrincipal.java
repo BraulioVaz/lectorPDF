@@ -1,9 +1,11 @@
 package bvaz.os.lector_pdf.controladores;
 
+import bvaz.os.lector_pdf.modelos.SistemaArchivos;
 import bvaz.os.lector_pdf.modelos.entidades.*;
 import bvaz.os.lector_pdf.vistas.*;
 
-public class ControladorPrincipal extends ControladorBase implements ObservadorDeSeleccion{
+public class ControladorPrincipal extends ControladorBase implements ObservadorDeSeleccion, 
+	ObservadorDeCambiosEnBD{
 	private VistaInicio vista;
 	
 	public ControladorPrincipal(VistaInicio pVista) {
@@ -11,6 +13,12 @@ public class ControladorPrincipal extends ControladorBase implements ObservadorD
 		
 		vista = pVista;
 		vista.agregarObservadorDeExplorador(this);
+		
+		actualizarExplorador();
+	}
+	
+	public void actualizarExplorador() {
+		vista.actualizarExplorador(SistemaArchivos.obtenerInstancia().estructurarArchivos());
 	}
 
 	@Override
@@ -21,6 +29,11 @@ public class ControladorPrincipal extends ControladorBase implements ObservadorD
 			libroSeleccionado = (Libro) nodo;
 			vista.agregarPestaña("Lector", new VisorPDF(libroSeleccionado.archivo));
 		}
+	}
+	
+	@Override
+	public void operacionDML() {
+		actualizarExplorador();
 	}
 
 }
