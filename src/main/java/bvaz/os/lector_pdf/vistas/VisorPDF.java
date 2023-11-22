@@ -21,7 +21,7 @@ public class VisorPDF extends VistaBase{
 	private int paginaActual;
 	private int escalaActual;
 	
-	public VisorPDF() {
+	public VisorPDF(String url) {
 		txtPagina = new JTextField(2);
 		lblTotalPaginas = new JLabel();
 		btnAumentarEscala = new JButton("+");
@@ -97,7 +97,7 @@ public class VisorPDF extends VistaBase{
 		
 		actualizarContadorEscala();
 		
-		String url = "PDF de prueba";
+		//Carga del PDF
 		cargarDocumento(url);
 		
 		this.setLayout(new BorderLayout());

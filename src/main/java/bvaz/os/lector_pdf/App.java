@@ -11,23 +11,26 @@ public class App
 {
     public static void main( String[] args ) throws Exception
     {
+    	ControladorPrincipal cPrincipal;
     	ControladorAutores cAutores;
     	ControladorEditoriales cEditoriales;
     	ControladorLibros cLibros;
     	ControladorCarpetas cCarpetas;
-    	Ventana v = new Ventana();
+    	Ventana ventana;
     	
+    	cPrincipal = new ControladorPrincipal(new VistaInicio());
     	cAutores = new ControladorAutores(new VistaAutores());
     	cEditoriales = new ControladorEditoriales(new VistaEditoriales());
     	cLibros = new ControladorLibros(new VistaLibros());
     	cCarpetas = new ControladorCarpetas(new VistaCarpetas());
     	
-    	v.agregarMenu("Autores", cAutores.getVista());
-    	v.agregarMenu("Editoriales", cEditoriales.getVista());
-    	v.agregarMenu("Libros", cLibros.getVista());
-    	v.agregarMenu("Carpetas", cCarpetas.getVista());
+    	ventana = new Ventana((VistaInicio) cPrincipal.getVista());
+    	ventana.agregarMenu("Autores", cAutores.getVista());
+    	ventana.agregarMenu("Editoriales", cEditoriales.getVista());
+    	ventana.agregarMenu("Libros", cLibros.getVista());
+    	ventana.agregarMenu("Carpetas", cCarpetas.getVista());
     	
-    	v.setVisible(true);
+    	ventana.setVisible(true);
     }
 }
 
@@ -36,7 +39,7 @@ class Ventana extends JFrame{
 	private JMenuBar menu;
 	private VistaInicio base;
 	
-	public Ventana() {
+	public Ventana(VistaInicio vistaBase) {
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Dimension tamPantalla = tk.getScreenSize();
 		int alto, ancho, x, y;
@@ -49,12 +52,8 @@ class Ventana extends JFrame{
 		menu = new JMenuBar();
 		this.setJMenuBar(menu);
 		
-		base = new VistaInicio();
+		base = vistaBase;
 		base.actualizarExplorador(SistemaArchivos.obtenerInstancia().estructurarArchivos());
-		/**/
-		VisorPDF visor = new VisorPDF();
-		base.agregarPestaña("Lector", visor);
-		/**/
 		this.add(base);
 		
 		this.setSize(ancho, alto);

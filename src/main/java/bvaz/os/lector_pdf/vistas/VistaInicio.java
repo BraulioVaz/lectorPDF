@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import bvaz.os.lector_pdf.modelos.tda.*;
+import bvaz.os.lector_pdf.controladores.ObservadorDeSeleccion;
 
 public class VistaInicio extends VistaBase{
 	private static final long serialVersionUID = 1L;
@@ -53,6 +54,10 @@ public class VistaInicio extends VistaBase{
 	public void actualizarExplorador(Arbol a) {
 		explorador.definirEstructura(a);
 		explorador.construir();
+	}
+	
+	public void agregarObservadorDeExplorador(ObservadorDeSeleccion o) {
+		explorador.agregarObservadorSeleccion(o);
 	}
 }
 
