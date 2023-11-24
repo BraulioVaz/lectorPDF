@@ -15,6 +15,7 @@ public class App
     	ControladorEditoriales cEditoriales;
     	ControladorLibros cLibros;
     	ControladorCarpetas cCarpetas;
+    	ControladorOrganizarLibros cOrganizadorDeLibros;
     	Ventana ventana;
     	
     	cPrincipal = new ControladorPrincipal(new VistaInicio());
@@ -22,6 +23,7 @@ public class App
     	cEditoriales = new ControladorEditoriales(new VistaEditoriales());
     	cLibros = new ControladorLibros(new VistaLibros());
     	cCarpetas = new ControladorCarpetas(new VistaCarpetas());
+    	cOrganizadorDeLibros = new ControladorOrganizarLibros(new VistaOrganizarLibros());
     	
     	/*Establecen relaciones Observador-Observado*/
     	cLibros.agregarOyente(cPrincipal);
@@ -35,6 +37,7 @@ public class App
     	ventana.agregarMenu("Editoriales", cEditoriales.getVista());
     	ventana.agregarMenu("Libros", cLibros.getVista());
     	ventana.agregarMenu("Carpetas", cCarpetas.getVista());
+    	ventana.agregarMenu("Org. de libros", cOrganizadorDeLibros.getVista());
     	
     	ventana.setVisible(true);
     }
