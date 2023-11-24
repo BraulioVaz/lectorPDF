@@ -1,6 +1,7 @@
 package bvaz.os.lector_pdf.controladores;
 
 import java.awt.event.*;
+import java.util.*;
 import bvaz.os.lector_pdf.modelos.entidades.Carpeta;
 import bvaz.os.lector_pdf.modelos.tda.Arbol;
 import bvaz.os.lector_pdf.modelos.DistribuidorCarpetas;
@@ -10,12 +11,14 @@ import bvaz.os.lector_pdf.vistas.*;
 public class ControladorCarpetas extends ControladorBase{
 	private VistaCarpetas vista;
 	private DistribuidorCarpetas modelo;
+	private ArrayList<ObservadorDeCambiosEnBD> oyentesDeModificacionesBD;
 	
 	public ControladorCarpetas(VistaCarpetas pVista) {
 		super(pVista);
 		
 		vista = pVista;
 		modelo = new DistribuidorCarpetas();
+		oyentesDeModificacionesBD = new ArrayList<ObservadorDeCambiosEnBD>();
 		
 		definirEventos();
 		actualizarListadoDeCarpetas();
@@ -68,6 +71,8 @@ public class ControladorCarpetas extends ControladorBase{
 		if(operacionExitosa) {
 			vista.mostrarMensaje("Operación exitosa", "Se ha agregado la carpeta correctamente");
 			actualizarListadoDeCarpetas();
+			actualizarExplorador();
+			notificarCambioEnBD();
 		}
 		else {
 			vista.mostrarError("Error", "No se ha podido crear la carpeta");
@@ -86,6 +91,7 @@ public class ControladorCarpetas extends ControladorBase{
 		
 		if(operacionExitosa) {
 			actualizarExplorador();
+			notificarCambioEnBD();
 		}
 	}
 	
@@ -99,6 +105,17 @@ public class ControladorCarpetas extends ControladorBase{
 		
 		if(operacionExitosa) {
 			actualizarExplorador();
+			notificarCambioEnBD();
+		}
+	}
+	
+	public void agregarOyente(ObservadorDeCambiosEnBD o) {
+		oyentesDeModificacionesBD.add(o);
+	}
+	
+	private void notificarCambioEnBD() {
+		for(ObservadorDeCambiosEnBD o : oyentesDeModificacionesBD) {
+			o.operacionDML();
 		}
 	}
 }

@@ -27,6 +27,7 @@ public class App
     	cLibros.agregarOyente(cPrincipal);
     	cAutores.agregarOyente(cLibros);
     	cEditoriales.agregarOyente(cLibros);
+    	cCarpetas.agregarOyente(cPrincipal);
     	
     	/*Definicion del menu*/
     	ventana = new Ventana((VistaInicio) cPrincipal.getVista());
