@@ -27,9 +27,12 @@ public class App
     	
     	/*Establecen relaciones Observador-Observado*/
     	cLibros.agregarOyente(cPrincipal);
+    	cLibros.agregarOyente(cOrganizadorDeLibros);
     	cAutores.agregarOyente(cLibros);
     	cEditoriales.agregarOyente(cLibros);
     	cCarpetas.agregarOyente(cPrincipal);
+    	cCarpetas.agregarOyente(cOrganizadorDeLibros);
+    	cOrganizadorDeLibros.agregarOyente(cPrincipal);
     	
     	/*Definicion del menu*/
     	ventana = new Ventana((VistaInicio) cPrincipal.getVista());

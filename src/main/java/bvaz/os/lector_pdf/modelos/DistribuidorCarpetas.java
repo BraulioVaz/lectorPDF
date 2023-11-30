@@ -3,6 +3,7 @@ package bvaz.os.lector_pdf.modelos;
 import java.sql.*;
 import java.util.*;
 import bvaz.os.lector_pdf.modelos.entidades.Carpeta;
+import bvaz.os.lector_pdf.modelos.entidades.Libro;
 
 public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 
@@ -190,5 +191,63 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 		}
 		
 		return clavesLibros;
+	}
+	
+	public boolean registrarLibro(Carpeta pCarpeta, Libro pLibro) {
+		Connection conexion = null;
+		PreparedStatement sentencia = null;
+		String sql = "INSERT INTO libros_carpetas (libro, carpeta) VALUES (?, ?)";
+		int nuevosRegistros = 0;
+		
+		conexion = ConectorBD.conectar();
+		
+		try {
+			sentencia = conexion.prepareStatement(sql);
+			sentencia.setInt(1, pLibro.id_libro);
+			sentencia.setInt(2, pCarpeta.id_carpeta);
+			
+			nuevosRegistros = sentencia.executeUpdate();
+			
+			if(nuevosRegistros == 1) {
+				return true;
+			}
+		}
+		catch(Exception e) {
+			
+		}
+		finally {
+			try {conexion.close(); } catch(Exception e) {}
+		}
+		
+		return false;
+	}
+	
+	public boolean quitarLibroDeCarpeta(Carpeta pCarpeta, Libro pLibro) {
+		Connection conexion = null;
+		PreparedStatement sentencia = null;
+		String sql = "DELETE FROM libros_carpetas WHERE libro = ? AND carpeta = ?;";
+		int registrosEliminados = 0;
+		
+		conexion = ConectorBD.conectar();
+		
+		try {
+			sentencia = conexion.prepareStatement(sql);
+			sentencia.setInt(1, pLibro.id_libro);
+			sentencia.setInt(2, pCarpeta.id_carpeta);
+			
+			registrosEliminados = sentencia.executeUpdate();
+			
+			if(registrosEliminados == 1) {
+				return true;
+			}
+		}
+		catch(Exception e) {
+			
+		}
+		finally {
+			try {conexion.close(); } catch(Exception e) {}
+		}
+		
+		return false;
 	}
 }

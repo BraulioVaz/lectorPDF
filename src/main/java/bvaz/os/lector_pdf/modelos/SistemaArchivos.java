@@ -29,7 +29,7 @@ public class SistemaArchivos {
 	 */
 	public Arbol estructurarCarpetas() {
 		List<Carpeta> carpetas = manejadorCarpetas.obtenerTodos();
-		Arbol raiz = new Arbol("Raiz");
+		Arbol raiz = new Arbol("RAIZ");
 		ArrayList<Arbol> nodosSinRevisar = new ArrayList<Arbol>();
 		Arbol nodoActual, subarbol;
 		Carpeta contenidoNodo;
@@ -85,18 +85,21 @@ public class SistemaArchivos {
 		Libro libroActual = null;
 		List<Integer> idLibros = null;
 		Object[] parametroBusqueda = new Object[1];
+		int cantidadDeSubcarpetas = raiz.hijos().size();
 		
-		for(Arbol a : raiz.hijos()) {
-			agregarHojas(a, librosAgregados);
+		for(int i = 0; i < cantidadDeSubcarpetas; i++) {
+			Arbol nodoActual = raiz.hijos().get(i);
 			
-			carpetaActual = (Carpeta) a.raiz();
+			agregarHojas(nodoActual, librosAgregados);
+			
+			carpetaActual = (Carpeta) nodoActual.raiz();
 			idLibros = manejadorCarpetas.contenido(carpetaActual);
 			
 			for(Integer id : idLibros) {
 				parametroBusqueda[0] = id;
 				libroActual = manejadorLibros.buscarPorID(parametroBusqueda);
 				
-				raiz.agregarHijo(new Arbol(libroActual));
+				nodoActual.agregarHijo(new Arbol(libroActual));
 				if(!librosAgregados.contains(libroActual)) {
 					librosAgregados.add(libroActual);
 				}

@@ -74,6 +74,23 @@ class Explorador extends JTree{
 		return nodo.getUserObject();
 	}
 	
+	public Object carpetaActiva() {
+		DefaultMutableTreeNode nodoActual, nodoPadre;
+		
+		if(this.isSelectionEmpty()) {
+			return null;
+		}
+		
+		nodoActual = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
+		nodoPadre = (DefaultMutableTreeNode) nodoActual.getParent();
+		
+		if(nodoPadre == null || nodoPadre.getUserObject().equals("RAIZ")) {
+			return null;
+		}
+		
+		return nodoPadre.getUserObject();
+	}
+	
 	public void agregarObservadorSeleccion(ObservadorDeSeleccion o) {
 		oyentesDeSeleccion.add(o);
 	}
