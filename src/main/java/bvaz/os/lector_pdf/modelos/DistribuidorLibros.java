@@ -24,16 +24,12 @@ public class DistribuidorLibros extends DistribuidorEntidades<Libro>{
 
 	@Override
 	public List<Libro> obtenerTodos() {
-		Connection conexion = null;
+		Connection conexion = ConectorBD.conectar();
 		ArrayList<Libro> libros = new ArrayList<Libro>();
-		Statement stmt;
 		ResultSet rs;
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			stmt = conexion.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM libros;");
+		try(Statement sentencia = conexion.createStatement()) {
+			rs = sentencia.executeQuery("SELECT * FROM libros;");
 				
 			while(rs.next()) {
 				libros.add(instanciar(rs));
@@ -42,28 +38,21 @@ public class DistribuidorLibros extends DistribuidorEntidades<Libro>{
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-		finally {
-			try{ conexion.close(); } catch(Exception e){ }
-		}
 		
 		return libros;
 	}
 
 	@Override
 	public Libro buscarPorID(Object[] pId) {
-		Connection conexion = null;
+		Connection conexion = ConectorBD.conectar();
 		Libro libros = new Libro();
 		String sql = "SELECT * FROM libros WHERE id_libro = ?;";
 		int id = (int) pId[0];
-		PreparedStatement stmt;
 		ResultSet rs;
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			stmt = conexion.prepareStatement(sql);
-			stmt.setInt(1, id);
-			rs = stmt.executeQuery();
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setInt(1, id);
+			rs = sentencia.executeQuery();
 				
 			while(rs.next()) {
 				libros = instanciar(rs);
@@ -72,9 +61,6 @@ public class DistribuidorLibros extends DistribuidorEntidades<Libro>{
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-		finally {
-			try{ conexion.close(); } catch(Exception e){ }
-		}
 		
 		return libros;
 	}
@@ -82,7 +68,6 @@ public class DistribuidorLibros extends DistribuidorEntidades<Libro>{
 	@Override
 	public boolean insertar(Libro entidad) {
 		Connection conexion = ConectorBD.conectar();
-		PreparedStatement stmt = null;
 		String sql = "INSERT INTO libros (titulo, "
 				+ "editorial, "
 				+ "fecha_publicacion, "
@@ -90,16 +75,14 @@ public class DistribuidorLibros extends DistribuidorEntidades<Libro>{
 				+ "marcador) VALUES (?,?,?,?,?);";
 		int inserciones = 0;
 		
-		try {
-			stmt = conexion.prepareStatement(sql);
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setString(1, entidad.titulo);
+			sentencia.setInt(2, entidad.editorial);
+			sentencia.setString(3, entidad.fecha_publicacion);
+			sentencia.setString(4, entidad.archivo);
+			sentencia.setString(5, entidad.marcador);
 			
-			stmt.setString(1, entidad.titulo);
-			stmt.setInt(2, entidad.editorial);
-			stmt.setString(3, entidad.fecha_publicacion);
-			stmt.setString(4, entidad.archivo);
-			stmt.setString(5, entidad.marcador);
-			
-			inserciones = stmt.executeUpdate();
+			inserciones = sentencia.executeUpdate();
 			
 			if(inserciones == 1) {
 				return true;
@@ -115,7 +98,6 @@ public class DistribuidorLibros extends DistribuidorEntidades<Libro>{
 	@Override
 	public boolean actualizar(Libro entidad) {
 		Connection conexion = ConectorBD.conectar();
-		PreparedStatement stmt = null;
 		String sql = "UPDATE libros SET titulo = ?,"
 				+ "editorial = ?,"
 				+ "fecha_publicacion = ?,"
@@ -123,17 +105,15 @@ public class DistribuidorLibros extends DistribuidorEntidades<Libro>{
 				+ "marcador = ? WHERE id_libro = ?;";
 		int modificaciones = 0;
 		
-		try {
-			stmt = conexion.prepareStatement(sql);
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setString(1, entidad.titulo);
+			sentencia.setInt(2, entidad.editorial);
+			sentencia.setString(3, entidad.fecha_publicacion);
+			sentencia.setString(4, entidad.archivo);
+			sentencia.setString(5, entidad.marcador);
+			sentencia.setInt(6, entidad.id_libro);
 			
-			stmt.setString(1, entidad.titulo);
-			stmt.setInt(2, entidad.editorial);
-			stmt.setString(3, entidad.fecha_publicacion);
-			stmt.setString(4, entidad.archivo);
-			stmt.setString(5, entidad.marcador);
-			stmt.setInt(6, entidad.id_libro);
-			
-			modificaciones = stmt.executeUpdate();
+			modificaciones = sentencia.executeUpdate();
 			
 			if(modificaciones == 1) {
 				return true;
@@ -149,17 +129,14 @@ public class DistribuidorLibros extends DistribuidorEntidades<Libro>{
 	@Override
 	public boolean eliminar(Object[] pId) {
 		Connection conexion = ConectorBD.conectar();
-		PreparedStatement stmt = null;
 		String sql = "DELETE FROM libros WHERE id_libro = ?";
 		int id = (int) pId[0];
 		int eliminaciones = 0;
 		
-		try {
-			stmt = conexion.prepareStatement(sql);
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setInt(1, id);
 			
-			stmt.setInt(1, id);
-			
-			eliminaciones = stmt.executeUpdate();
+			eliminaciones = sentencia.executeUpdate();
 			
 			if(eliminaciones == 1) {
 				return true;

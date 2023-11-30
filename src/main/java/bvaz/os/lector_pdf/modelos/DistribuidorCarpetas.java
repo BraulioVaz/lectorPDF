@@ -24,16 +24,12 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 
 	@Override
 	public List<Carpeta> obtenerTodos() {
-		Connection conexion = null;
+		Connection conexion = ConectorBD.conectar();
 		ArrayList<Carpeta> carpetas = new ArrayList<Carpeta>();
-		Statement stmt;
 		ResultSet rs;
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			stmt = conexion.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM carpetas;");
+		try(Statement sentencia = conexion.createStatement()) {
+			rs = sentencia.executeQuery("SELECT * FROM carpetas;");
 				
 			while(rs.next()) {
 				carpetas.add(instanciar(rs));
@@ -42,9 +38,6 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-		finally {
-			try{ conexion.close(); } catch(Exception e){ }
-		}
 		
 		return carpetas;
 	}
@@ -52,17 +45,14 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 	@Override
 	public Carpeta buscarPorID(Object[] pID) {
 		Carpeta carpetaBuscada = null;
-		Connection conexion = null;
-		PreparedStatement stmt = null;
+		Connection conexion = ConectorBD.conectar();
 		ResultSet resultado = null;
+		String sql = "SELECT * FROM carpetas WHERE id_carpeta = ?;";
 		int id = (int) pID[0];
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			stmt = conexion.prepareStatement("SELECT * FROM carpetas WHERE id_carpeta = ?;");
-			stmt.setInt(1, id);
-			resultado = stmt.executeQuery();
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setInt(1, id);
+			resultado = sentencia.executeQuery();
 			
 			if(resultado.next()) {
 				carpetaBuscada = instanciar(resultado);
@@ -71,9 +61,6 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-		finally {
-			try {conexion.close(); } catch(Exception e) {}
-		}
 		
 		return carpetaBuscada;
 	}
@@ -81,29 +68,23 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 	@Override
 	public boolean insertar(Carpeta entidad) {
 		boolean operacionExitosa = false;
-		Connection conexion = null;
-		PreparedStatement stmt = null;
+		Connection conexion = ConectorBD.conectar();
+		String sql = "INSERT INTO carpetas (nombre, raiz) VALUES (?,?);";
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			stmt = conexion.prepareStatement("INSERT INTO carpetas (nombre, raiz) VALUES (?,?);");
-			stmt.setString(1, entidad.nombre);
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setString(1, entidad.nombre);
 			
 			if(entidad.raiz == -1) {
-				stmt.setNull(2, Types.INTEGER);
+				sentencia.setNull(2, Types.INTEGER);
 			}
 			else {
-				stmt.setInt(2, entidad.raiz);
+				sentencia.setInt(2, entidad.raiz);
 			}
 			
-			operacionExitosa = stmt.executeUpdate() == 1;
+			operacionExitosa = sentencia.executeUpdate() == 1;
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-		}
-		finally {
-			try {conexion.close(); } catch(Exception e) {}
 		}
 		
 		return operacionExitosa;
@@ -112,30 +93,24 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 	@Override
 	public boolean actualizar(Carpeta entidad) {
 		boolean operacionExitosa = false;
-		Connection conexion = null;
-		PreparedStatement stmt = null;
+		Connection conexion = ConectorBD.conectar();
+		String sql = "UPDATE carpetas SET nombre = ?, raiz = ? WHERE id_carpeta = ?;";
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			stmt = conexion.prepareStatement("UPDATE carpetas SET nombre = ?, raiz = ? WHERE id_carpeta = ?;");
-			stmt.setString(1, entidad.nombre);
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setString(1, entidad.nombre);
 			
 			if(entidad.raiz == -1) {
-				stmt.setNull(2, Types.INTEGER);
+				sentencia.setNull(2, Types.INTEGER);
 			}
 			else {
-				stmt.setInt(2, entidad.raiz);
+				sentencia.setInt(2, entidad.raiz);
 			}
 			
-			stmt.setInt(3, entidad.id_carpeta);
-			operacionExitosa = stmt.executeUpdate() == 1;
+			sentencia.setInt(3, entidad.id_carpeta);
+			operacionExitosa = sentencia.executeUpdate() == 1;
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-		}
-		finally {
-			try {conexion.close(); } catch(Exception e) {}
 		}
 		
 		return operacionExitosa;
@@ -144,40 +119,31 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 	@Override
 	public boolean eliminar(Object[] pID) {
 		boolean operacionExitosa = false;
-		Connection conexion = null;
-		PreparedStatement stmt = null;
+		Connection conexion = ConectorBD.conectar();
+		String sql = "DELETE FROM carpetas WHERE id_carpeta = ?;";
 		int id = (int) pID[0];
-		conexion = ConectorBD.conectar();
 		
-		try {
-			stmt = conexion.prepareStatement("DELETE FROM carpetas WHERE id_carpeta = ?;");
-			stmt.setInt(1, id);
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setInt(1, id);
 			
-			operacionExitosa = stmt.executeUpdate() == 1;
+			operacionExitosa = sentencia.executeUpdate() == 1;
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-		}
-		finally {
-			try {conexion.close(); } catch(Exception e) {}
 		}
 		
 		return operacionExitosa;
 	}
 	
 	public List<Integer> contenido(Carpeta carpeta) {
-		Connection conexion = null;
-		PreparedStatement stmt = null;
+		Connection conexion = ConectorBD.conectar();
 		ResultSet resultado = null;
 		String sql = "SELECT * FROM libros_carpetas WHERE carpeta = ?;";
 		ArrayList<Integer> clavesLibros = new ArrayList<Integer>();
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			stmt = conexion.prepareStatement(sql);
-			stmt.setInt(1, carpeta.id_carpeta);
-			resultado = stmt.executeQuery();
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+			sentencia.setInt(1, carpeta.id_carpeta);
+			resultado = sentencia.executeQuery();
 			
 			if(resultado.next()) {
 				clavesLibros.add(resultado.getInt("libro"));
@@ -186,23 +152,16 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-		finally {
-			try {conexion.close(); } catch(Exception e) {}
-		}
 		
 		return clavesLibros;
 	}
 	
 	public boolean registrarLibro(Carpeta pCarpeta, Libro pLibro) {
-		Connection conexion = null;
-		PreparedStatement sentencia = null;
+		Connection conexion = ConectorBD.conectar();
 		String sql = "INSERT INTO libros_carpetas (libro, carpeta) VALUES (?, ?)";
 		int nuevosRegistros = 0;
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			sentencia = conexion.prepareStatement(sql);
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
 			sentencia.setInt(1, pLibro.id_libro);
 			sentencia.setInt(2, pCarpeta.id_carpeta);
 			
@@ -213,25 +172,18 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 			}
 		}
 		catch(Exception e) {
-			
-		}
-		finally {
-			try {conexion.close(); } catch(Exception e) {}
+			e.printStackTrace();
 		}
 		
 		return false;
 	}
 	
 	public boolean quitarLibroDeCarpeta(Carpeta pCarpeta, Libro pLibro) {
-		Connection conexion = null;
-		PreparedStatement sentencia = null;
+		Connection conexion = ConectorBD.conectar();
 		String sql = "DELETE FROM libros_carpetas WHERE libro = ? AND carpeta = ?;";
 		int registrosEliminados = 0;
 		
-		conexion = ConectorBD.conectar();
-		
-		try {
-			sentencia = conexion.prepareStatement(sql);
+		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
 			sentencia.setInt(1, pLibro.id_libro);
 			sentencia.setInt(2, pCarpeta.id_carpeta);
 			
@@ -242,10 +194,7 @@ public class DistribuidorCarpetas extends DistribuidorEntidades<Carpeta>{
 			}
 		}
 		catch(Exception e) {
-			
-		}
-		finally {
-			try {conexion.close(); } catch(Exception e) {}
+			e.printStackTrace();
 		}
 		
 		return false;

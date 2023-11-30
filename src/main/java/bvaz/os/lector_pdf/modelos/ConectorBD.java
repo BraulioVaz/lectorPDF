@@ -3,23 +3,24 @@ package bvaz.os.lector_pdf.modelos;
 import java.sql.*;
 
 public class ConectorBD {
+	private static final String CADENA_CONEXION = "jdbc:sqlite::resource:base_datos.db";
+	private static Connection conexion;
 	
 	private ConectorBD() {
 		
 	}
 	
 	/**
-	 * Crea una conexion con la base de datos SQLite
+	 * Crea una conexion con la base de datos.
 	 * @return Conexion a BD
 	 */
 	public static Connection conectar(){
-		Connection conexion = null;
-		String url = "jdbc:sqlite::resource:base_datos.db";
-		
 		try {
-			conexion = DriverManager.getConnection(url);
+			if(conexion == null || conexion.isClosed()) {
+				conexion = DriverManager.getConnection(CADENA_CONEXION);
+			}	
 		}
-		catch(SQLException e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
