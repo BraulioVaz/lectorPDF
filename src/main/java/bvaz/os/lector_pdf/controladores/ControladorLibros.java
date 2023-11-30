@@ -6,12 +6,12 @@ import bvaz.os.lector_pdf.modelos.*;
 import bvaz.os.lector_pdf.modelos.entidades.*;
 import bvaz.os.lector_pdf.vistas.VistaLibros;
 
-public class ControladorLibros extends ControladorBase implements ObservadorDeCambiosEnBD{
+public class ControladorLibros extends ControladorBase implements ObservadorBD{
 	private DistribuidorLibros modelo;
 	private DistribuidorAutores autores;
 	private DistribuidorEditoriales editoriales;
 	private VistaLibros vista;
-	private ArrayList<ObservadorDeCambiosEnBD> oyentesDeModificacionesEnBD;
+	private ArrayList<ObservadorBD> oyentesDeModificacionesEnBD;
 	
 	public ControladorLibros(VistaLibros pVista) {
 		super(pVista);
@@ -19,7 +19,7 @@ public class ControladorLibros extends ControladorBase implements ObservadorDeCa
 		modelo = new DistribuidorLibros();
 		autores = new DistribuidorAutores();
 		editoriales = new DistribuidorEditoriales();
-		oyentesDeModificacionesEnBD = new ArrayList<ObservadorDeCambiosEnBD>();
+		oyentesDeModificacionesEnBD = new ArrayList<ObservadorBD>();
 		vista = pVista;
 		
 		actualizarEntidadesExternas();
@@ -61,12 +61,12 @@ public class ControladorLibros extends ControladorBase implements ObservadorDeCa
 		}
 	}
 	
-	public void agregarOyente(ObservadorDeCambiosEnBD o) {
+	public void agregarOyente(ObservadorBD o) {
 		oyentesDeModificacionesEnBD.add(o);
 	}
 	
 	private void notificarCambioEnBD() {
-		for(ObservadorDeCambiosEnBD o : oyentesDeModificacionesEnBD) {
+		for(ObservadorBD o : oyentesDeModificacionesEnBD) {
 			o.operacionDML();
 		}
 	}

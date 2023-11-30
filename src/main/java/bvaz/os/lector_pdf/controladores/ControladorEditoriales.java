@@ -8,13 +8,13 @@ import bvaz.os.lector_pdf.vistas.VistaEditoriales;
 public class ControladorEditoriales extends ControladorBase{
 	private DistribuidorEditoriales modelo;
 	private VistaEditoriales vista;
-	private ArrayList<ObservadorDeCambiosEnBD> oyentesDeModificacionesEnBD;
+	private ArrayList<ObservadorBD> oyentesDeModificacionesEnBD;
 	
 	public ControladorEditoriales(VistaEditoriales pVista) {
 		super(pVista);
 		
 		modelo = new DistribuidorEditoriales();
-		oyentesDeModificacionesEnBD = new ArrayList<ObservadorDeCambiosEnBD>();
+		oyentesDeModificacionesEnBD = new ArrayList<ObservadorBD>();
 		vista = pVista;
 		
 		vista.setEventoAgregarEditorial(new ActionListener() {
@@ -37,12 +37,12 @@ public class ControladorEditoriales extends ControladorBase{
 		notificarCambioEnBD();
 	}
 	
-	public void agregarOyente(ObservadorDeCambiosEnBD o) {
+	public void agregarOyente(ObservadorBD o) {
 		oyentesDeModificacionesEnBD.add(o);
 	}
 	
 	private void notificarCambioEnBD() {
-		for(ObservadorDeCambiosEnBD o : oyentesDeModificacionesEnBD) {
+		for(ObservadorBD o : oyentesDeModificacionesEnBD) {
 			o.operacionDML();
 		}
 	}

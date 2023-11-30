@@ -11,14 +11,14 @@ import bvaz.os.lector_pdf.vistas.*;
 public class ControladorCarpetas extends ControladorBase{
 	private VistaCarpetas vista;
 	private DistribuidorCarpetas modelo;
-	private ArrayList<ObservadorDeCambiosEnBD> oyentesDeModificacionesBD;
+	private ArrayList<ObservadorBD> oyentesDeModificacionesBD;
 	
 	public ControladorCarpetas(VistaCarpetas pVista) {
 		super(pVista);
 		
 		vista = pVista;
 		modelo = new DistribuidorCarpetas();
-		oyentesDeModificacionesBD = new ArrayList<ObservadorDeCambiosEnBD>();
+		oyentesDeModificacionesBD = new ArrayList<ObservadorBD>();
 		
 		definirEventos();
 		actualizarListadoDeCarpetas();
@@ -109,12 +109,12 @@ public class ControladorCarpetas extends ControladorBase{
 		}
 	}
 	
-	public void agregarOyente(ObservadorDeCambiosEnBD o) {
+	public void agregarOyente(ObservadorBD o) {
 		oyentesDeModificacionesBD.add(o);
 	}
 	
 	private void notificarCambioEnBD() {
-		for(ObservadorDeCambiosEnBD o : oyentesDeModificacionesBD) {
+		for(ObservadorBD o : oyentesDeModificacionesBD) {
 			o.operacionDML();
 		}
 	}

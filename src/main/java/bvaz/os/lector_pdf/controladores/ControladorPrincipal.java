@@ -5,7 +5,7 @@ import bvaz.os.lector_pdf.modelos.entidades.*;
 import bvaz.os.lector_pdf.vistas.*;
 
 public class ControladorPrincipal extends ControladorBase implements ObservadorDeSeleccion, 
-	ObservadorDeCambiosEnBD{
+	ObservadorBD{
 	private VistaInicio vista;
 	
 	public ControladorPrincipal(VistaInicio pVista) {
