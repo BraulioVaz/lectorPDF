@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import bvaz.os.lector_pdf.modelos.tda.*;
 import bvaz.os.lector_pdf.controladores.ObservadorDeSeleccion;
+import info.clearthought.layout.*;
 
 public class VistaInicio extends VistaBase{
 	private static final long serialVersionUID = 1L;
@@ -13,33 +14,20 @@ public class VistaInicio extends VistaBase{
 	
 	public VistaInicio() {
 		JScrollPane pnlExplorador;
-		GridBagConstraints c;
 		
 		explorador = new Explorador();
 		
-		this.setLayout(new GridBagLayout());
+		//Layout
+		double[][] cuadricula = {{0.20, 0.8}, {TableLayout.FILL}};
+		this.setLayout(new TableLayout(cuadricula));
 		
 		//Explorador
 		pnlExplorador = new JScrollPane(explorador);
-		c = new GridBagConstraints();
-		
-		c.gridx = 0;
-		c.gridy = 0;
-		c.weightx = 0.15;
-		c.weighty = 1;
-		c.fill = GridBagConstraints.BOTH;
-		this.add(pnlExplorador, c);
+		this.add(pnlExplorador, "0,0");
 		
 		//Seccion de libros
 		pnlLibros = new JTabbedPane();
-		c = new GridBagConstraints();
-		
-		c.gridx = 1;
-		c.gridy = 0;
-		c.weightx = 0.85;
-		c.weighty = 1;
-		c.fill = GridBagConstraints.BOTH;
-		this.add(pnlLibros, c);
+		this.add(pnlLibros, "1,0");
 	}
 	
 	public void agregarPestaña(String nombre, VistaBase vista) {

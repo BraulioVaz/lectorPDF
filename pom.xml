@@ -41,6 +41,12 @@
   		<artifactId>sqlite-jdbc</artifactId>
   		<version>3.42.0.0</version>
 	</dependency>
+	
+	<dependency>
+    	<groupId>tablelayout</groupId>
+    	<artifactId>TableLayout</artifactId>
+    	<version>20050920</version>
+	</dependency>
 
   </dependencies>
   

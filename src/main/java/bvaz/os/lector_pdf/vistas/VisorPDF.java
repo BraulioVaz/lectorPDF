@@ -131,8 +131,8 @@ public class VisorPDF extends VistaBase{
 		this.add(contenedor, BorderLayout.NORTH);
 		
 		//Lienzo
-		lienzo.actualizar();
 		this.add(lienzo, BorderLayout.CENTER);
+		lienzo.actualizar();
 	}
 	
 	private void cargarDocumento(String url) {
@@ -248,23 +248,43 @@ public class VisorPDF extends VistaBase{
 		cambiarEscala(escalaActual - 25);
 	}
 	
-	private class Lienzo extends JPanel{
+	private class Lienzo extends JScrollPane{
 		private static final long serialVersionUID = 1L;
-		private JLabel contenedorImagen;
+		private PanelDesplazable contenedorImagen;
 		
 		public Lienzo() {
-			JPanel panel = new JPanel();
-			JScrollPane panelDeslizable = new JScrollPane(panel);
-			contenedorImagen = new JLabel();
-			contenedorImagen.setHorizontalAlignment(SwingConstants.CENTER);
+			contenedorImagen = new PanelDesplazable();
+			this.setViewportView(contenedorImagen);
 			
-			/*Configuracion de eventos del panel deslizable*/
+			/*Nuevo layout manager en el viewport para que el
+			 * panel desplazable siempre llene el viewport*/
+			this.getViewport().setLayout(new ViewportLayout() {
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void layoutContainer(Container pViewport) {
+					JViewport viewport = (JViewport) pViewport;
+					Scrollable vista = (Scrollable)viewport.getView();
+					Dimension tamVista = vista.getPreferredScrollableViewportSize();
+					Dimension tamViewport = viewport.getPreferredSize();
+					
+					if(!viewport.getSize().equals(new Dimension(0, 0))) {
+						tamViewport = viewport.getSize();
+					}
+					
+					if(tamVista.getWidth() < viewport.getWidth()) {
+						tamVista = new Dimension(tamViewport.width, tamVista.height);
+					}
+					
+					viewport.setViewSize(tamVista);
+				}
+			});
 			
 			//Obtención del foco
-			panelDeslizable.addMouseListener(new MouseAdapter() {
+			this.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					requestFocusInWindow();
+					Lienzo.this.requestFocusInWindow();
 				}
 			});
 			
@@ -291,20 +311,17 @@ public class VisorPDF extends VistaBase{
 			KeyStroke teclaSiguiente = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 			KeyStroke teclaRetroceso = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 			
-			panelDeslizable.getInputMap(condicion).put(teclaSiguiente, "siguiente");
-			panelDeslizable.getInputMap(condicion).put(teclaRetroceso, "previo");
-			panelDeslizable.getActionMap().put("siguiente", siguientePagina);
-			panelDeslizable.getActionMap().put("previo", paginaPrevia);
+			InputMap mapaOriginal = (InputMap) UIManager.getDefaults().get("ScrollPane.ancestorInputMap");
+			mapaOriginal.remove(teclaSiguiente);
+			mapaOriginal.remove(teclaRetroceso);
+			
+			this.getInputMap(condicion).put(teclaSiguiente, "siguiente");
+			this.getInputMap(condicion).put(teclaRetroceso, "previo");
+			this.getActionMap().put("siguiente", siguientePagina);
+			this.getActionMap().put("previo", paginaPrevia);
 			
 			/*Politicas de barras de desplazamiento*/
-			panelDeslizable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			
-			/*Centrado de la imagen*/
-			panel.setLayout(new BorderLayout());
-			panel.add(contenedorImagen, BorderLayout.CENTER);
-			
-			this.setLayout(new GridLayout(1,1));
-			this.add(panelDeslizable);
+			this.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		}
 		
 		private BufferedImage renderizarPagina() {
@@ -320,7 +337,7 @@ public class VisorPDF extends VistaBase{
 			render = new PDFRenderer(documento);
 			
 			try {
-				imgPagina = render.renderImage(paginaActual);
+				imgPagina = render.renderImageWithDPI(paginaActual, 124.0f);
 				ancho = (int) (imgPagina.getWidth() * (escalaActual / 100.0));
 				alto = (int) (imgPagina.getHeight() * (escalaActual / 100.0));
 				
@@ -337,15 +354,56 @@ public class VisorPDF extends VistaBase{
 		}
 		
 		public void actualizar() {
-			ImageIcon icono = null;
 			Image imgPagina = renderizarPagina();
 			
 			if(imgPagina == null) {
 				return;
 			}
 			
-			icono = new ImageIcon(imgPagina);
-			contenedorImagen.setIcon(icono);
+			contenedorImagen.cambiarImagen(imgPagina);
 		}
+	}
+	
+	private class PanelDesplazable extends JPanel implements Scrollable{
+		private static final long serialVersionUID = 1L;
+		public JLabel imagen;
+		private int desplazamiento;
+		
+		public PanelDesplazable() {
+			imagen = new JLabel();
+			desplazamiento = 50;
+			
+			this.add(imagen);
+		}
+		
+		public void cambiarImagen(Image nuevaImagen) {
+			imagen.setIcon(new ImageIcon(nuevaImagen));
+		}
+		
+		@Override
+		public Dimension getPreferredScrollableViewportSize() {
+			return this.getPreferredSize();
+		}
+
+		@Override
+		public int getScrollableBlockIncrement(Rectangle areaVisible, int orientacion, int direccion) {
+			return desplazamiento;
+		}
+
+		@Override
+		public boolean getScrollableTracksViewportHeight() {
+			return false;
+		}
+
+		@Override
+		public boolean getScrollableTracksViewportWidth() {
+			return false;
+		}
+
+		@Override
+		public int getScrollableUnitIncrement(Rectangle areaVisible, int orientacion, int direccion) {
+			return desplazamiento;
+		}
+		
 	}
 }
