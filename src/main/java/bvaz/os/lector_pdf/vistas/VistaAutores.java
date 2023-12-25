@@ -12,12 +12,14 @@ public class VistaAutores extends VistaBase{
 	private JTextField txtNombre;
 	private JTextField txtApellidos;
 	private JButton btnAgregar;
+	private JButton btnEliminar;
 	private TabuladorEntidades<Autor> tblAutores;
 	
 	public VistaAutores() {
 		txtNombre = new JTextField(20);
 		txtApellidos = new JTextField(20);
 		btnAgregar = new JButton("Agregar");
+		btnEliminar = new JButton("Eliminar");
 		GridBagConstraints c;
 		
 		this.setLayout(new GridBagLayout());
@@ -62,13 +64,18 @@ public class VistaAutores extends VistaBase{
 		c.anchor = GridBagConstraints.WEST;
 		this.add(txtApellidos, c);
 		
-		//Boton agregar
+		//Botones
+		Box contenedorDeBotones = Box.createHorizontalBox();
+		contenedorDeBotones.add(btnAgregar);
+		contenedorDeBotones.add(Box.createHorizontalStrut(50));
+		contenedorDeBotones.add(btnEliminar);
+		
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 2;
 		c.weighty = 0.2;
-		this.add(btnAgregar, c);
+		this.add(contenedorDeBotones, c);
 		
 		//CRUD
 		JScrollPane contenedor = null;
@@ -102,10 +109,14 @@ public class VistaAutores extends VistaBase{
 	}
 	
 	public Autor autorSeleccionado() {
-		return null;
+		return tblAutores.entidadActiva();
 	}
 	
 	public void definirEventoAgregar(ActionListener a) {
 		btnAgregar.addActionListener(a);
+	}
+	
+	public void definirEventoEliminar(ActionListener a) {
+		btnEliminar.addActionListener(a);
 	}
 }

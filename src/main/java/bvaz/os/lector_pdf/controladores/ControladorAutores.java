@@ -2,6 +2,7 @@ package bvaz.os.lector_pdf.controladores;
 
 import java.awt.event.*;
 import java.util.*;
+import bvaz.os.lector_pdf.modelos.entidades.Autor;
 import bvaz.os.lector_pdf.modelos.DistribuidorAutores;
 import bvaz.os.lector_pdf.vistas.VistaAutores;
 
@@ -23,8 +24,16 @@ public class ControladorAutores extends ControladorBase{
 	
 	private void definirEventos() {
 		vista.definirEventoAgregar(new ActionListener() {
-			public void actionPerformed(ActionEvent a) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				agregarAutor();
+			}
+		});
+		
+		vista.definirEventoEliminar(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				eliminarAutor();
 			}
 		});
 	}
@@ -43,6 +52,29 @@ public class ControladorAutores extends ControladorBase{
 		}
 		else {
 			vista.mostrarError("Error", "No se pudo insertar el autor");
+		}
+	}
+	
+	private void eliminarAutor() {
+		Autor autorSeleccionado = vista.autorSeleccionado();
+		Object[] idAutor = new Object[1];
+		boolean operacionExitosa = false;
+		
+		if(autorSeleccionado == null) {
+			vista.mostrarError("Operacion invalida", "Debe seleccionar un autor");
+			return;
+		}
+		
+		idAutor[0] = autorSeleccionado.id_autor;
+		operacionExitosa = modelo.eliminar(idAutor);
+		
+		if(operacionExitosa) {
+			vista.mostrarMensaje("Operación exitosa", "Se ha eliminado el autor correctamente.");
+			actualizarTablaAutores();
+			notificarCambioEnBD();
+		}
+		else {
+			vista.mostrarError("Hubo un problema", "No se ha podido eliminar el autor.");
 		}
 	}
 	

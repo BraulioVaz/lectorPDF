@@ -106,7 +106,7 @@ public class DistribuidorAutores extends DistribuidorEntidades<Autor>{
 	@Override
 	public boolean eliminar(Object[] pID) {
 		Connection conexion = ConectorBD.conectar();
-		String sql = "DELETE FROM autores SET WHERE id_autor = ?;";
+		String sql = "DELETE FROM autores WHERE id_autor = ?;";
 		int modificaciones = 0;
 		
 		try(PreparedStatement sentencia = conexion.prepareStatement(sql)) {
