@@ -1,6 +1,9 @@
 package bvaz.os.lector_pdf.modelos.entidades;
 
-public class Carpeta extends Entidad{
+import java.util.Objects;
+
+public final class Carpeta extends Entidad{
+	@LlavePrimaria
 	public int id_carpeta;
 	public String nombre;
 	public int raiz;
@@ -13,20 +16,34 @@ public class Carpeta extends Entidad{
 	public String toString() {
 		return nombre;
 	}
-	
+
 	@Override
-	public boolean equals(Object objComparado) {
+	public int hashCode() {
+		return Objects.hash(id_carpeta, nombre, raiz);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
 		Carpeta otraCarpeta;
+		boolean resultado;
 		
-		if(!(objComparado instanceof Carpeta)) {
-			return false;
-		}
-		
-		otraCarpeta = (Carpeta) objComparado;
-		if(this.id_carpeta == otraCarpeta.id_carpeta) {
+		if (this == obj) {
 			return true;
 		}
 		
-		return false;
+		if (obj == null) {
+			return false;
+		}
+		
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		
+		otraCarpeta = (Carpeta) obj;
+		resultado = id_carpeta == otraCarpeta.id_carpeta;
+		resultado = resultado && Objects.equals(nombre, otraCarpeta.nombre);
+		resultado = resultado && raiz == otraCarpeta.raiz;
+		
+		return resultado;   
 	}
 }
