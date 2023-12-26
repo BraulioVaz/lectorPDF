@@ -23,8 +23,6 @@ public class ControladorCarpetas extends ControladorBase{
 		definirEventos();
 		actualizarListadoDeCarpetas();
 		actualizarExplorador();
-		
-		//TODO Configurar para que actualice la vista inicial
 	}
 	
 	private void definirEventos() {
