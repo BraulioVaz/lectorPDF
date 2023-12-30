@@ -95,8 +95,7 @@ public class ControladorCarpetas extends ControladorBase{
 	
 	private void desasignarSubcarpeta(Carpeta subcarpeta) {
 		boolean operacionExitosa = false;
-		Integer[] idSupercarpeta = {subcarpeta.raiz};
-		Carpeta supercarpeta = modelo.buscarPorID(idSupercarpeta);
+		Carpeta supercarpeta = modelo.buscarPorID(subcarpeta.raiz);
 		
 		subcarpeta.raiz = supercarpeta.raiz;
 		operacionExitosa = modelo.actualizar(subcarpeta);

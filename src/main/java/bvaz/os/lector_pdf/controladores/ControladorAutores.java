@@ -57,7 +57,6 @@ public class ControladorAutores extends ControladorBase{
 	
 	private void eliminarAutor() {
 		Autor autorSeleccionado = vista.autorSeleccionado();
-		Object[] idAutor = new Object[1];
 		boolean operacionExitosa = false;
 		
 		if(autorSeleccionado == null) {
@@ -65,8 +64,7 @@ public class ControladorAutores extends ControladorBase{
 			return;
 		}
 		
-		idAutor[0] = autorSeleccionado.id_autor;
-		operacionExitosa = modelo.eliminar(idAutor);
+		operacionExitosa = modelo.eliminar(autorSeleccionado.id_autor);
 		
 		if(operacionExitosa) {
 			vista.mostrarMensaje("Operación exitosa", "Se ha eliminado el autor correctamente.");

@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 
 @Target(FIELD)
 @Retention(RUNTIME)
-@interface LlavePrimaria {
-
+public @interface LlavePrimaria {
+	int orden() default 1;
+	boolean autoincremento() default true;
 }

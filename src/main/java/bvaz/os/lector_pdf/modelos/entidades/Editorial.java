@@ -2,6 +2,7 @@ package bvaz.os.lector_pdf.modelos.entidades;
 
 import java.util.Objects;
 
+@Tabla("editoriales")
 public final class Editorial extends Entidad{
 	@LlavePrimaria
 	public int id_editorial;
