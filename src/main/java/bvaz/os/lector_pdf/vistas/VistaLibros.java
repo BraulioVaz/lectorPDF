@@ -7,18 +7,23 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.*;
-import bvaz.os.lector_pdf.modelos.entidades.*;
+import bvaz.os.lector_pdf.modelos.entidades.Autor;
+import bvaz.os.lector_pdf.modelos.entidades.Editorial;
+import bvaz.os.lector_pdf.modelos.vistas.LibroCualificado;
 
 public class VistaLibros extends VistaBase{
 	private static final long serialVersionUID = 1L;
+	private static final int MODO_INSERCION = 5;
+	private static final int MODO_EDICION = 10;
+	
 	private JRadioButton optAgregar;
 	private JRadioButton optEditar;
-	private JComboBox<Libro> cboLibros;
+	private ComboBox<LibroCualificado> cboLibros;
 	private JTextField txtTitulo;
 	private JButton btnAgregarAutor;
 	private JPanel pnlAutores;
 	private ArrayList<Autor> autores;
-	private JComboBox<Editorial> cboEditorial;
+	private ComboBox<Editorial> cboEditorial;
 	private JTextField txtFecha;
 	private JButton btnExplorador;
 	private JFileChooser explorador;
@@ -26,52 +31,110 @@ public class VistaLibros extends VistaBase{
 	private JButton btnAgregarLibro;
 	private JButton btnModificarLibro;
 	private JButton btnLimpiar;
-	private ArrayList<RegistroAutores> listadoAutores;
-	private boolean estaInicializado;
+	private ArrayList<RegistroOpcional<Autor>> listadoAutores;
 	
-	private void inicializarAtributos() {
-		if(estaInicializado) {
-			return;
-		}
+	/**
+	 * Cambia la configuración a modo de inserción.
+	 */
+	private void modoInsercion() {
+		cboLibros.setEnabled(false);
 		
-		optAgregar = new JRadioButton("Agregar un nuevo libro");
-		optEditar = new JRadioButton("Editar un registro existente");
-		cboLibros = new JComboBox<Libro>();
-		txtTitulo = new JTextField(20);
-		btnAgregarAutor = new JButton("+");
-		pnlAutores = new JPanel();
-		autores = new ArrayList<Autor>();
-		cboEditorial = new JComboBox<Editorial>();
-		txtFecha = new JTextField(10);
-		btnExplorador = new JButton("Buscar");
-		explorador = new JFileChooser();
-		lblArchivo = new JLabel();
-		btnAgregarLibro = new JButton("Agregar");
-		btnModificarLibro = new JButton("Modificar");
-		btnLimpiar = new JButton("Limpiar");
-		listadoAutores = new ArrayList<RegistroAutores>();
-		estaInicializado = true;
+		limpiar();
 	}
 	
-	private void agregarAutor() {
-		RegistroAutores nuevoAutor = new RegistroAutores();
+	/**
+	 * Cambia la configuración a modo de edición
+	 */
+	private void modoEdicion() {
+		cboLibros.setEnabled(true);
+		
+		mostrarLibroActivo();
+	}
+	
+	/**
+	 * Recupera el modo actual.
+	 * @return {@link #MODO_EDICION} o {@link #MODO_INSERCION}
+	 */
+	private int modoActivo() {
+		if(optAgregar.isSelected()) {
+			return MODO_INSERCION;
+		}
+		
+		return MODO_EDICION;
+	}
+	
+	/**
+	 * Agrega un nuevo registro de autor.
+	 * @param seleccionado El autor seleccionado, este parametro puede ser
+	 * nulo para un registro sin seleccion.
+	 */
+	private void agregarRegistroDeAutor(Autor seleccionado) {
+		RegistroOpcional<Autor> nuevoAutor = new RegistroOpcional<Autor>();
+		
+		nuevoAutor.actualizarListadoDeObjetos(autores);
+		nuevoAutor.setEventoEliminar(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				listadoAutores.remove(nuevoAutor);
+				pnlAutores.remove(nuevoAutor);
+			}
+		});
+		
+		if(seleccionado != null) {
+			nuevoAutor.setObjectoSeleccionado(seleccionado);
+		}
 		
 		listadoAutores.add(nuevoAutor);
 		pnlAutores.add(nuevoAutor);
+		
 		pnlAutores.revalidate();
+		pnlAutores.repaint();
+	}
+	
+	/**
+	 * Elimina todos los registros de autores.
+	 */
+	private void limpiarSeleccionDeAutores() {
+		listadoAutores.clear();
+		pnlAutores.removeAll();
+		
+		pnlAutores.revalidate();
+		pnlAutores.repaint();
+	}
+	
+	/**
+	 * Muestra el libro seleccionado si la vista esta en modo edicion.
+	 */
+	private void mostrarLibroActivo() {
+		LibroCualificado libroSeleccionado = cboLibros.getObjetoSeleccionado();
+		
+		if(modoActivo() != MODO_EDICION || libroSeleccionado == null) {
+			return;
+		}
+		
+		txtTitulo.setText(libroSeleccionado.getTitulo());
+		cboEditorial.setObjetoSeleccionado(libroSeleccionado.getEditorial());
+		txtFecha.setText(libroSeleccionado.getFechaDePublicacion());
+		lblArchivo.setText(libroSeleccionado.getUbicacionDeArchivo());
+		
+		limpiarSeleccionDeAutores();
+		
+		for(Autor autor : libroSeleccionado.getAutores()) {
+			agregarRegistroDeAutor(autor);
+		}
 	}
 	
 	/**
 	 * Elimina los datos ingresados dejando todos los controles en su estado inicial.
 	 */
 	public void limpiar() {
-		cboLibros.setSelectedIndex(-1);
+		cboLibros.setObjetoSeleccionado(null);
 		txtTitulo.setText("");
-		pnlAutores.removeAll();
-		pnlAutores.revalidate();
-		cboEditorial.setSelectedIndex(-1);
+		cboEditorial.setObjetoSeleccionado(null);
 		txtFecha.setText("");
 		lblArchivo.setText("");
+		
+		limpiarSeleccionDeAutores();
 	}
 	
 	public VistaLibros() {
@@ -79,13 +142,53 @@ public class VistaLibros extends VistaBase{
 		JScrollPane pnlBase = null;
 		GridBagConstraints c = null;
 		
-		inicializarAtributos();
+		optAgregar = new JRadioButton("Agregar un nuevo libro");
+		optEditar = new JRadioButton("Editar un registro existente");
+		cboLibros = new ComboBox<LibroCualificado>();
+		txtTitulo = new JTextField(20);
+		btnAgregarAutor = new JButton("+");
+		pnlAutores = new JPanel();
+		autores = new ArrayList<Autor>();
+		cboEditorial = new ComboBox<Editorial>();
+		txtFecha = new JTextField(10);
+		btnExplorador = new JButton("Buscar");
+		explorador = new JFileChooser();
+		lblArchivo = new JLabel();
+		btnAgregarLibro = new JButton("Agregar");
+		btnModificarLibro = new JButton("Modificar");
+		btnLimpiar = new JButton("Limpiar");
+		listadoAutores = new ArrayList<RegistroOpcional<Autor>>();
 		
 		//Configuracion de radio buttons
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(optAgregar);
 		bg.add(optEditar);
+		
+		optAgregar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				modoInsercion();
+			}
+		});
+		
+		optEditar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				modoEdicion();
+			}
+		});
+		
 		optAgregar.doClick();
+		
+		//Configuracion del combobox
+		cboLibros.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(cboLibros.getObjetoSeleccionado() != null) {
+					mostrarLibroActivo();
+				}
+			}
+		});
 		
 		//Configuracion del explorador
 		explorador.setFileFilter(new FileNameExtensionFilter("Libro (.pdf)", "pdf"));
@@ -107,7 +210,7 @@ public class VistaLibros extends VistaBase{
 		btnAgregarAutor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				agregarAutor();
+				agregarRegistroDeAutor(null);
 			}
 		});
 		
@@ -265,11 +368,11 @@ public class VistaLibros extends VistaBase{
 	 * Establece los libros en el ComboBox de seleccion del libro a editar.
 	 * @param pLibros Lista de libros.
 	 */
-	public void definirLibros(List<Libro> pLibros) {
-		cboLibros.removeAllItems();
+	public void definirLibros(List<LibroCualificado> pLibros) {
+		cboLibros.limpiarListado();
 		
-		for(Libro l : pLibros) {
-			cboLibros.addItem(l);
+		for(LibroCualificado l : pLibros) {
+			cboLibros.agregarObjeto(l);
 		}
 	}
 	
@@ -281,8 +384,8 @@ public class VistaLibros extends VistaBase{
 		autores.clear();
 		autores.addAll(pAutores);
 		
-		for(RegistroAutores r : listadoAutores) {
-			r.actualizarAutores();
+		for(RegistroOpcional<Autor> r : listadoAutores) {
+			r.actualizarListadoDeObjetos(autores);;
 		}
 	}
 	
@@ -291,10 +394,10 @@ public class VistaLibros extends VistaBase{
 	 * @param pEditoriales Lista de editoriales.
 	 */
 	public void definirEditoriales(List<Editorial> pEditoriales) {
-		cboEditorial.removeAllItems();
+		cboEditorial.limpiarListado();
 		
 		for(Editorial e : pEditoriales) {
-			cboEditorial.addItem(e);
+			cboEditorial.agregarObjeto(e);
 		}
 	}
 	
@@ -302,30 +405,44 @@ public class VistaLibros extends VistaBase{
 	 * Recupera el libro que se busca modificar.
 	 * @return El libro seleccionado o nulo si esta en modo de insercion.
 	 */
-	public Libro libroActivo() {
-		if(optAgregar.isSelected()) {
+	public LibroCualificado libroActivo() {
+		if(modoActivo() != MODO_EDICION) {
 			return null;
 		}
 		
-		return (Libro) cboLibros.getSelectedItem();
+		return cboLibros.getObjetoSeleccionado();
 	}
 	
 	/**
-	 * Genera un libro cuyos atributos son llenados con los controles de entrada,
-	 * no se revisa la validez de los atributos.
-	 * @return Nuevo objeto LIBRO
+	 * Recupera el titulo ingresado por el usuario.
+	 * @return El titulo del libro.
 	 */
-	public Libro generarLibro() {
-		Libro libro = new Libro();
-		Editorial editorial = (Editorial)cboEditorial.getSelectedItem();
-		
-		libro.titulo = txtTitulo.getText();
-		libro.editorial = editorial.id_editorial;
-		libro.fecha_publicacion = txtFecha.getText();
-		libro.archivo = lblArchivo.getText();
-		libro.marcador = "";
-		
-		return libro;
+	public String getTitulo() {
+		return txtTitulo.getText();
+	}
+	
+	/**
+	 * Recupera la fecha de publicacion ingresada por el usuario.
+	 * @return La fecha de publicacion.
+	 */
+	public String getFechaDePublicacion() {
+		return txtFecha.getText();
+	}
+	
+	/**
+	 * Recupera la ubicacion absoluta del archivo PDF seleccionado por el usuario.
+	 * @return Ubicacion absoluta.
+	 */
+	public String getUbicacionDeArchivo() {
+		return lblArchivo.getText();
+	}
+	
+	/**
+	 * Recupera la editorial seleccionada por el usuario.
+	 * @return La editorial seleccionada.
+	 */
+	public Editorial getEditorial() {
+		return (Editorial) cboEditorial.getObjetoSeleccionado();
 	}
 	
 	/**
@@ -336,54 +453,10 @@ public class VistaLibros extends VistaBase{
 	public List<Autor> getAutores(){
 		ArrayList<Autor> autoresSeleccionados = new ArrayList<Autor>();
 		
-		for(RegistroAutores r : listadoAutores) {
-			autoresSeleccionados.add(r.itemSeleccionado());
+		for(RegistroOpcional<Autor> r : listadoAutores) {
+			autoresSeleccionados.add(r.getObjetoSeleccionado());
 		}
 		
 		return autoresSeleccionados;
-	}
-	
-	private class RegistroAutores extends JPanel{
-		private static final long serialVersionUID = 1L;
-		private JComboBox<Autor> selector;
-		
-		public RegistroAutores() {
-			JButton btnEliminarAutor = new JButton("X");
-			Box controles = Box.createHorizontalBox();
-			selector = new JComboBox<Autor>();
-			
-			btnEliminarAutor.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					pnlAutores.remove(RegistroAutores.this);
-					pnlAutores.revalidate();
-				}
-			});
-			
-			actualizarAutores();
-			
-			this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-			
-			controles.add(selector);
-			controles.add(Box.createHorizontalStrut(15));
-			controles.add(btnEliminarAutor);
-			
-			this.add(controles);
-			this.add(Box.createVerticalStrut(15));
-		}
-		
-		public Autor itemSeleccionado() {
-			return (Autor)selector.getSelectedItem();
-		}
-		
-		public void actualizarAutores() {
-			selector.removeAllItems();
-			
-			for(Autor a : autores) {
-				selector.addItem(a);
-			}
-			
-			this.revalidate();
-		}
 	}
 }
